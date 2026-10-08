@@ -370,16 +370,16 @@ function drawSpeech(g, t){
     const s = talking[k];
     if (t > s.until){ delete talking[k]; continue; }
     if (t < s.t0) continue;
-    let x, y, side = null;
+    let x, y, side = null, below = null;
     if (k === 'D'){
       const tq = proj({ x:TH.W/2, y:.5 }), kk = U*tq.s;
       x = tq.x + 22*kk; y = tq.y - (FP() ? 12 : TH.key === 'atari' ? 30 : 16)*kk;
-      if (FP()) side = { hx:tq.x, hy:tq.y - 24*kk, r:7*kk };
+      if (FP()) below = { x:tq.x, y:tq.y - 18*kk };
     } else {
       const lay = L[k]; if (!lay) continue;
       const hs = lay.headScreen || proj(lay.rail);
       x = hs.x; y = FP() ? hs.y + (lay.headR || 20)*1.4 + 22 : hs.y - 34;
-      if (FP()) side = { hx:hs.x, hy:hs.y + (lay.headR || 20)*.62, r:(lay.headR || 20)*.62 };
+      if (FP()) below = { x:hs.x, y:hs.y + (lay.headR || 20)*1.36 };
     }
     const pix = TH.key === 'atari', fs = pix ? 8 : 13;
     g.save();
@@ -389,6 +389,18 @@ function drawSpeech(g, t){
     g.globalAlpha = a;
     g.fillStyle = TH.key === 'saloon' ? '#f6ecd6' : '#ffffff';
     g.strokeStyle = '#111'; g.lineWidth = pix ? 2 : 1.5;
+    if (below){
+      // first person: the bubble hangs under the speaker's chin, so faces and name tags stay clear
+      const bx = clamp(below.x, tw/2 + 6, CW - tw/2 - 6), top = clamp(below.y + 9, 6, CH - th - 6), tx = clamp(below.x, bx - tw/2 + 8, bx + tw/2 - 8);
+      g.beginPath(); g.rect(bx - tw/2, top, tw, th); g.fill(); g.stroke();
+      g.beginPath(); g.moveTo(tx - 5, top); g.lineTo(tx, top - 7); g.lineTo(tx + 5, top); g.closePath(); g.fill();
+      g.beginPath(); g.moveTo(tx - 5, top); g.lineTo(tx, top - 7); g.lineTo(tx + 5, top); g.stroke();
+      g.fillRect(tx - 4, top - 1, 8, 3);
+      g.fillStyle = '#111'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillText(s.text, bx, top + th/2 + 1, tw - 10);
+      g.restore();
+      continue;
+    }
     if (side){
       // first person: the bubble sits beside the speaker's face, toward the middle of the table, never over it
       // outward, away from the dealer, unless there is no room at the screen edge

@@ -509,7 +509,7 @@ function newGame(c){
   logLine(`${c.name} sits down with ${money(c.stack)}. Blinds ${money(c.sb)}/${money(c.bb)}.`, 'st');
   players.slice(1).forEach(p => logLine(`COM ${p.name} joins with ${money(p.chips)}.`, 'st'));
 }
-const viewFor = key => store.get('view_' + key) || (key === 'atari' ? 'first' : 'above');
+const viewFor = key => store.get('view_' + key) || 'first';
 function applyView(v){
   store.set('view_' + cfg.skin, v);
   applySkin(cfg.skin);

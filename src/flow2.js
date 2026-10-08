@@ -304,12 +304,15 @@ function hudHTML(status){
   const eqTxt = !ODDS || !live_ ? '' : eq == null ? `<span class="eq">Win <b>…</b></span>` :
     `<span class="eq ${toCall > 0 ? (good ? 'good' : 'bad') : 'good'}" title="Chance to win against ${opp} random hand${opp > 1 ? 's' : ''}">Win <b>${Math.round(eq*100)}%</b><small> vs ${opp}</small></span>`;
   const mini = up ? miniCards(p.hole) : '';
-  const facts = !h ? '' : h.done ? '' : `Pot <b>${money(pot)}</b>` + (live_ ? (toCall > 0 ? ` · Call <b>${money(toCall)}</b> · Need <b>${Math.round(need*100)}%</b>` : humanResolve ? ' · <span class="free">Free to check</span>' : '') : '');
-  const bar = ODDS && live_ && eq != null ? `<div class="ebar"><i class="${toCall > 0 && !good ? 'bad' : 'good'}" style="width:${(eq*100).toFixed(1)}%"></i>${toCall > 0 ? `<u style="left:${(need*100).toFixed(1)}%"></u>` : ''}</div>` : '';
+  const callTxt = !live_ ? '' : toCall > 0 ? `Call <b>${money(toCall)}</b> · Need <b>${Math.round(need*100)}%</b>` : humanResolve ? '<span class="free">Free to check</span>' : '';
+  const bar = `<div class="ebar">${ODDS && live_ && eq != null ? `<i class="${toCall > 0 && !good ? 'bad' : 'good'}" style="width:${(eq*100).toFixed(1)}%"></i>${toCall > 0 ? `<u style="left:${(need*100).toFixed(1)}%"></u>` : ''}` : ''}</div>`;
+  // first person already shows your hand above the table, so the bar carries the price instead
+  const mid = FP() ? `<span class="hn">${callTxt}</span>` : `<span class="hn">${esc(hand)}${sub ? ` <i>${esc(sub)}</i>` : ''}</span>`;
+  const left2 = FP() ? '' : callTxt;
   return `<div class="strip hud">
-    <div class="h1"><span class="me-st" title="Your stack">${money(p.chips)}</span>${mini}<span class="hn">${esc(hand)}${sub ? ` <i>${esc(sub)}</i>` : ''}</span>${eqTxt}</div>
+    <div class="h1"><span class="me-st" title="Your stack">${money(p.chips)}</span>${mini}${mid}${eqTxt}</div>
     ${bar}
-    <div class="h2"><span class="facts">${facts}</span><span class="st">${status || ''}</span></div>
+    <div class="h2"><span class="facts">${left2}</span><span class="st">${status || ''}</span></div>
   </div>`;
 }
 function renderDock(){

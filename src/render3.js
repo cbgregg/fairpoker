@@ -705,10 +705,11 @@ function drawScene(g, t){
     return;
   }
   if (h && h.drama > 0) drawDrama(g, h, t);
+  if (FP()){ drawSpeech(g, t); if (h && !h.done && !h.banner && TH.key !== 'atari') drawPotPill(g); }
   drawSeats(g);
   drawYou(g, t);
   if (FP()) drawTopBoard(g);
-  drawSpeech(g, t);
+  if (!FP()) drawSpeech(g, t);
   drawBanner(g);
 }
 // showdown: the room darkens, a spotlight follows each reveal, hand names pop up over the cards
@@ -953,7 +954,7 @@ function drawAtariBoard(g){ drawTopBoard(g); }
 // The real cards still land on the felt where the dealer puts them.
 function topBoardRect(){
   const pix = TH.key === 'atari', classic = !pix || TH.cardStyle !== 'pixel';
-  const w = pix && !classic ? (CW < 520 ? 48 : 64) : Math.round(Math.min(CW*.165, 76)), hh = classic ? Math.round(w*1.42) : w*1.5, gap = Math.round(w*.09);
+  const w = pix && !classic ? (CW < 520 ? 40 : 56) : Math.round(Math.min(CW*.125, 60)), hh = classic ? Math.round(w*1.42) : w*1.5, gap = Math.round(w*.1);
   return { pix, classic, w, hh, gap, x0:Math.round(CW/2 - (5*w + 4*gap)/2), y0:10 };
 }
 function drawTopBoard(g){
@@ -979,7 +980,7 @@ function drawTopBoard(g){
   const p = me();
   if (p.hole.length === 2 && h.heroFlip >= 1 && !p.folded && p.inHand){
     const name = handName(evaluate([...p.hole, ...h.board]));
-    const sal = TH.key === 'saloon', fs = pix ? 12 : sal ? 17 : 15;
+    const sal = TH.key === 'saloon', fs = pix ? 10 : sal ? 15 : 13;
     g.font = pix ? font(fs, F_UI) : sal ? font(fs, F_OLD) : font(fs, F_UI, '800');
     const label = pix || sal ? name : name.toUpperCase(), tw = g.measureText(label).width + 22, th = fs + 12, ty = y0 + hh + 8;
     g.fillStyle = pix ? '#000' : sal ? 'rgba(24,14,8,.88)' : 'rgba(6,14,28,.88)'; g.fillRect(CW/2 - tw/2, ty, tw, th);
@@ -993,7 +994,7 @@ function drawAtariLabels(g, t){
   const h = H;
   if (h && !h.done && !h.banner) drawPotPill(g);
   if (h && h.drama > 0) drawDrama(g, h, t, 'labels');
-  drawSeats(g);
   drawSpeech(g, t);
+  drawSeats(g);
   drawBanner(g);
 }

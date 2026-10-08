@@ -5,7 +5,12 @@
             Siri-style voices on iPhone and Mac), with emotion via pitch, speed and volume
    studio : pre-recorded Azure neural voices with real acted emotion (voices/index.json)
    ===================================================================== */
-let VOICE_PACK = store.get('vpack') || 'retro';
+// defaults changed (first person, Regular table, Modern voices): apply them once to returning players too
+if (store.get('prefsv') !== '2'){
+  ['view_regular', 'view_saloon', 'view_atari', 'skin', 'vpack'].forEach(k => { try { localStorage.removeItem('fp_' + k); } catch(e){} });
+  store.set('prefsv', '2');
+}
+let VOICE_PACK = store.get('vpack') || 'modern';
 // every line category carries an emotion; Modern turns it into prosody, Studio recorded it acted
 const CAT_EMO = {
   check:'calm', call:'neutral', bet:'cocky', raise:'cocky', allin:'shout', fold:'sad', thinking:'whisper',

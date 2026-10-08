@@ -167,8 +167,8 @@ body.skin-saloon .info-2{font-weight:400}
 
 /* ---------- dock ---------- */
 .dock{flex:none;padding-inline:12px;padding-block:6px 12px;position:relative;z-index:10;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 0%,transparent),var(--bg) 40%)}
-.dock-in{max-width:620px;margin:0 auto;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;min-height:126px}
-@media (max-width:600px){ .dock-in{min-height:120px} }
+.dock-in{max-width:620px;margin:0 auto;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;min-height:calc(var(--hud-h,72px) + var(--ctl-h,64px) + 8px)}
+
 .strip{display:flex;justify-content:space-between;align-items:center;gap:10px;background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line);border-radius:0;padding:7px 10px 7px 8px;font-family:var(--f-ui);font-size:16px;font-weight:600;letter-spacing:.02em;min-height:44px}
 .strip .l{display:flex;align-items:center;gap:8px;min-width:0;white-space:nowrap;overflow:hidden}
 .strip .r{color:var(--muted);white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -186,7 +186,7 @@ body.skin-saloon .info-2{font-weight:400}
 .hud .h2 .facts{overflow:hidden;text-overflow:ellipsis;min-width:0}
 .hud .h2 .st{flex:none;max-width:55%;overflow:hidden;text-overflow:ellipsis}
 .hud .free{color:#5cc08b}
-.hud .ebar{position:relative;height:5px;background:rgba(255,255,255,.1);margin-top:6px}
+.hud .ebar{position:relative;height:4px;background:rgba(255,255,255,.08);margin-top:6px}
 .hud .ebar i{position:absolute;left:0;top:0;bottom:0;background:#5cc08b;transition:width .4s}
 .hud .ebar i.bad{background:#f0a04b}
 .hud .ebar u{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.5)}
@@ -223,6 +223,10 @@ body.skin-saloon .abtn{font-family:var(--f-head);font-weight:400;letter-spacing:
 .abtn.allin{background:var(--b-all)}
 .abtn.next{grid-column:1/-1;flex-direction:row;gap:10px;background:var(--b-next);color:var(--accent-ink);font-size:20px;min-height:58px;text-shadow:none}
 .pre{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.btns,.pre{height:var(--ctl-h,64px)}
+.btns .abtn,.pre button{height:100%;min-height:0 !important}
+.strip.hud{min-height:0;height:var(--hud-h,72px);box-sizing:border-box;overflow:hidden}
+.abtn svg{display:none}
 .pre button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;border-radius:0;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 92%,transparent);font-family:var(--f-ui);font-weight:700;font-size:16px;letter-spacing:.04em;color:var(--muted)}
 .pre button i{width:18px;height:18px;border-radius:0;border:2px solid var(--line-2);display:grid;place-items:center;flex:none}
 .pre button[aria-pressed="true"]{color:var(--ink);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--panel))}
@@ -295,7 +299,8 @@ body.skin-saloon .abtn{font-family:var(--f-head);font-weight:400;letter-spacing:
   .pill span{display:none}
   .info-1{display:none}
   .info-2{font-size:16px}
-  .abtn{font-size:15px;min-height:64px}
+  .abtn{font-size:15px}
+  :root{--ctl-h:56px;--hud-h:68px}
   body.skin-saloon .abtn{font-size:13px}
   .abtn small{font-size:13px}
   .strip{font-size:14px}
@@ -1357,16 +1362,16 @@ function drawSpeech(g, t){
     const s = talking[k];
     if (t > s.until){ delete talking[k]; continue; }
     if (t < s.t0) continue;
-    let x, y, side = null;
+    let x, y, side = null, below = null;
     if (k === 'D'){
       const tq = proj({ x:TH.W/2, y:.5 }), kk = U*tq.s;
       x = tq.x + 22*kk; y = tq.y - (FP() ? 12 : TH.key === 'atari' ? 30 : 16)*kk;
-      if (FP()) side = { hx:tq.x, hy:tq.y - 24*kk, r:7*kk };
+      if (FP()) below = { x:tq.x, y:tq.y - 18*kk };
     } else {
       const lay = L[k]; if (!lay) continue;
       const hs = lay.headScreen || proj(lay.rail);
       x = hs.x; y = FP() ? hs.y + (lay.headR || 20)*1.4 + 22 : hs.y - 34;
-      if (FP()) side = { hx:hs.x, hy:hs.y + (lay.headR || 20)*.62, r:(lay.headR || 20)*.62 };
+      if (FP()) below = { x:hs.x, y:hs.y + (lay.headR || 20)*1.36 };
     }
     const pix = TH.key === 'atari', fs = pix ? 8 : 13;
     g.save();
@@ -1376,6 +1381,18 @@ function drawSpeech(g, t){
     g.globalAlpha = a;
     g.fillStyle = TH.key === 'saloon' ? '#f6ecd6' : '#ffffff';
     g.strokeStyle = '#111'; g.lineWidth = pix ? 2 : 1.5;
+    if (below){
+      // first person: the bubble hangs under the speaker's chin, so faces and name tags stay clear
+      const bx = clamp(below.x, tw/2 + 6, CW - tw/2 - 6), top = clamp(below.y + 9, 6, CH - th - 6), tx = clamp(below.x, bx - tw/2 + 8, bx + tw/2 - 8);
+      g.beginPath(); g.rect(bx - tw/2, top, tw, th); g.fill(); g.stroke();
+      g.beginPath(); g.moveTo(tx - 5, top); g.lineTo(tx, top - 7); g.lineTo(tx + 5, top); g.closePath(); g.fill();
+      g.beginPath(); g.moveTo(tx - 5, top); g.lineTo(tx, top - 7); g.lineTo(tx + 5, top); g.stroke();
+      g.fillRect(tx - 4, top - 1, 8, 3);
+      g.fillStyle = '#111'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillText(s.text, bx, top + th/2 + 1, tw - 10);
+      g.restore();
+      continue;
+    }
     if (side){
       // first person: the bubble sits beside the speaker's face, toward the middle of the table, never over it
       // outward, away from the dealer, unless there is no room at the screen edge
@@ -5057,7 +5074,12 @@ CONVOS.push(...CONVOS_MORE.convos);
             Siri-style voices on iPhone and Mac), with emotion via pitch, speed and volume
    studio : pre-recorded Azure neural voices with real acted emotion (voices/index.json)
    ===================================================================== */
-let VOICE_PACK = store.get('vpack') || 'retro';
+// defaults changed (first person, Regular table, Modern voices): apply them once to returning players too
+if (store.get('prefsv') !== '2'){
+  ['view_regular', 'view_saloon', 'view_atari', 'skin', 'vpack'].forEach(k => { try { localStorage.removeItem('fp_' + k); } catch(e){} });
+  store.set('prefsv', '2');
+}
+let VOICE_PACK = store.get('vpack') || 'modern';
 // every line category carries an emotion; Modern turns it into prosody, Studio recorded it acted
 const CAT_EMO = {
   check:'calm', call:'neutral', bet:'cocky', raise:'cocky', allin:'shout', fold:'sad', thinking:'whisper',
@@ -7142,10 +7164,11 @@ function drawScene(g, t){
     return;
   }
   if (h && h.drama > 0) drawDrama(g, h, t);
+  if (FP()){ drawSpeech(g, t); if (h && !h.done && !h.banner && TH.key !== 'atari') drawPotPill(g); }
   drawSeats(g);
   drawYou(g, t);
   if (FP()) drawTopBoard(g);
-  drawSpeech(g, t);
+  if (!FP()) drawSpeech(g, t);
   drawBanner(g);
 }
 // showdown: the room darkens, a spotlight follows each reveal, hand names pop up over the cards
@@ -7390,7 +7413,7 @@ function drawAtariBoard(g){ drawTopBoard(g); }
 // The real cards still land on the felt where the dealer puts them.
 function topBoardRect(){
   const pix = TH.key === 'atari', classic = !pix || TH.cardStyle !== 'pixel';
-  const w = pix && !classic ? (CW < 520 ? 48 : 64) : Math.round(Math.min(CW*.165, 76)), hh = classic ? Math.round(w*1.42) : w*1.5, gap = Math.round(w*.09);
+  const w = pix && !classic ? (CW < 520 ? 40 : 56) : Math.round(Math.min(CW*.125, 60)), hh = classic ? Math.round(w*1.42) : w*1.5, gap = Math.round(w*.1);
   return { pix, classic, w, hh, gap, x0:Math.round(CW/2 - (5*w + 4*gap)/2), y0:10 };
 }
 function drawTopBoard(g){
@@ -7416,7 +7439,7 @@ function drawTopBoard(g){
   const p = me();
   if (p.hole.length === 2 && h.heroFlip >= 1 && !p.folded && p.inHand){
     const name = handName(evaluate([...p.hole, ...h.board]));
-    const sal = TH.key === 'saloon', fs = pix ? 12 : sal ? 17 : 15;
+    const sal = TH.key === 'saloon', fs = pix ? 10 : sal ? 15 : 13;
     g.font = pix ? font(fs, F_UI) : sal ? font(fs, F_OLD) : font(fs, F_UI, '800');
     const label = pix || sal ? name : name.toUpperCase(), tw = g.measureText(label).width + 22, th = fs + 12, ty = y0 + hh + 8;
     g.fillStyle = pix ? '#000' : sal ? 'rgba(24,14,8,.88)' : 'rgba(6,14,28,.88)'; g.fillRect(CW/2 - tw/2, ty, tw, th);
@@ -7430,8 +7453,8 @@ function drawAtariLabels(g, t){
   const h = H;
   if (h && !h.done && !h.banner) drawPotPill(g);
   if (h && h.drama > 0) drawDrama(g, h, t, 'labels');
-  drawSeats(g);
   drawSpeech(g, t);
+  drawSeats(g);
   drawBanner(g);
 }
 let feltPattern = null;
@@ -8326,7 +8349,7 @@ function newGame(c){
   logLine(`${c.name} sits down with ${money(c.stack)}. Blinds ${money(c.sb)}/${money(c.bb)}.`, 'st');
   players.slice(1).forEach(p => logLine(`COM ${p.name} joins with ${money(p.chips)}.`, 'st'));
 }
-const viewFor = key => store.get('view_' + key) || (key === 'atari' ? 'first' : 'above');
+const viewFor = key => store.get('view_' + key) || 'first';
 function applyView(v){
   store.set('view_' + cfg.skin, v);
   applySkin(cfg.skin);
@@ -8948,12 +8971,15 @@ function hudHTML(status){
   const eqTxt = !ODDS || !live_ ? '' : eq == null ? `<span class="eq">Win <b>…</b></span>` :
     `<span class="eq ${toCall > 0 ? (good ? 'good' : 'bad') : 'good'}" title="Chance to win against ${opp} random hand${opp > 1 ? 's' : ''}">Win <b>${Math.round(eq*100)}%</b><small> vs ${opp}</small></span>`;
   const mini = up ? miniCards(p.hole) : '';
-  const facts = !h ? '' : h.done ? '' : `Pot <b>${money(pot)}</b>` + (live_ ? (toCall > 0 ? ` · Call <b>${money(toCall)}</b> · Need <b>${Math.round(need*100)}%</b>` : humanResolve ? ' · <span class="free">Free to check</span>' : '') : '');
-  const bar = ODDS && live_ && eq != null ? `<div class="ebar"><i class="${toCall > 0 && !good ? 'bad' : 'good'}" style="width:${(eq*100).toFixed(1)}%"></i>${toCall > 0 ? `<u style="left:${(need*100).toFixed(1)}%"></u>` : ''}</div>` : '';
+  const callTxt = !live_ ? '' : toCall > 0 ? `Call <b>${money(toCall)}</b> · Need <b>${Math.round(need*100)}%</b>` : humanResolve ? '<span class="free">Free to check</span>' : '';
+  const bar = `<div class="ebar">${ODDS && live_ && eq != null ? `<i class="${toCall > 0 && !good ? 'bad' : 'good'}" style="width:${(eq*100).toFixed(1)}%"></i>${toCall > 0 ? `<u style="left:${(need*100).toFixed(1)}%"></u>` : ''}` : ''}</div>`;
+  // first person already shows your hand above the table, so the bar carries the price instead
+  const mid = FP() ? `<span class="hn">${callTxt}</span>` : `<span class="hn">${esc(hand)}${sub ? ` <i>${esc(sub)}</i>` : ''}</span>`;
+  const left2 = FP() ? '' : callTxt;
   return `<div class="strip hud">
-    <div class="h1"><span class="me-st" title="Your stack">${money(p.chips)}</span>${mini}<span class="hn">${esc(hand)}${sub ? ` <i>${esc(sub)}</i>` : ''}</span>${eqTxt}</div>
+    <div class="h1"><span class="me-st" title="Your stack">${money(p.chips)}</span>${mini}${mid}${eqTxt}</div>
     ${bar}
-    <div class="h2"><span class="facts">${facts}</span><span class="st">${status || ''}</span></div>
+    <div class="h2"><span class="facts">${left2}</span><span class="st">${status || ''}</span></div>
   </div>`;
 }
 function renderDock(){
