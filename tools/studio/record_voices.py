@@ -29,15 +29,15 @@ except ImportError:
 
 # ---- who sounds like whom (first voice found in your region wins) ---------------------------
 VOICES = {
-    'D':      (['en-US-GuyNeural'],                          {'pitch': -6, 'rate': -4}),   # the dealer
-    'Hattie': (['en-US-JaneNeural', 'en-US-AriaNeural'],     {}),
-    'Mae':    (['en-US-SaraNeural', 'en-US-JennyNeural'],    {}),
-    'Rosa':   (['en-US-NancyNeural', 'en-US-AriaNeural'],    {'pitch': -3}),
-    'Silas':  (['en-US-DavisNeural'],                        {}),
-    'Cyrus':  (['en-US-TonyNeural'],                         {}),
-    'Wyatt':  (['en-US-JasonNeural'],                        {}),
-    'Eli':    (['en-US-AndrewNeural', 'en-US-GuyNeural'],    {'pitch': 6, 'rate': 5}),
-    'Jeb':    (['en-US-BrianNeural', 'en-US-DavisNeural'],   {'pitch': -10, 'rate': -7}),
+    'D':      (['en-US-GuyNeural'],                              {'pitch': -6, 'rate': -4}),   # the dealer
+    'Hank':   (['en-US-ChristopherNeural', 'en-US-DavisNeural'], {'pitch': -4}),
+    'Mack':   (['en-US-EricNeural', 'en-US-TonyNeural'],         {}),
+    'Rocco':  (['en-US-RogerNeural', 'en-US-JasonNeural'],       {'pitch': -8, 'rate': -5}),
+    'Silas':  (['en-US-DavisNeural'],                            {}),
+    'Cyrus':  (['en-US-TonyNeural'],                             {}),
+    'Wyatt':  (['en-US-JasonNeural'],                            {}),
+    'Eli':    (['en-US-AndrewNeural', 'en-US-GuyNeural'],        {'pitch': 6, 'rate': 5}),
+    'Jeb':    (['en-US-BrianNeural', 'en-US-DavisNeural'],       {'pitch': -10, 'rate': -7}),
 }
 # emotion -> (Azure style, style degree, fallback prosody when the voice has no such style)
 EMO = {

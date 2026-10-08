@@ -6,9 +6,9 @@
    studio : pre-recorded Azure neural voices with real acted emotion (voices/index.json)
    ===================================================================== */
 // defaults changed (first person, Regular table, Modern voices): apply them once to returning players too
-if (store.get('prefsv') !== '3'){
+if (store.get('prefsv') !== '4'){
   ['view_regular', 'view_saloon', 'view_atari', 'skin', 'vpack'].forEach(k => { try { localStorage.removeItem('fp_' + k); } catch(e){} });
-  store.set('prefsv', '3');
+  store.set('prefsv', '4');
 }
 let VOICE_PACK = store.get('vpack') || 'neural';
 // every line category carries an emotion; Modern turns it into prosody, Studio recorded it acted
@@ -33,7 +33,7 @@ const EMO_PROS = {
   neutral:[1, 1, .9], calm:[.94, .96, .82], friendly:[1.03, 1.05, .9], cocky:[.9, 1.06, .95], excited:[1.16, 1.15, 1],
   shout:[1.12, 1.2, 1], angry:[1.1, .88, 1], sad:[.86, .86, .72], unfriendly:[.97, .9, .95], whisper:[.9, .95, .62]
 };
-const FEMALE_NAMES = new Set(['Hattie', 'Mae', 'Rosa']);
+const FEMALE_NAMES = new Set();          // everyone at this table is a man
 const FEMALE_VOICE = /samantha|ava|allison|susan|victoria|karen|moira|tessa|zira|aria|jenny|sara|nancy|jane|michelle|emma|libby|sonia|natasha|serena|fiona|zoe|nicky|joelle|ana|clara|jessa|ashley|amber|cora|elizabeth|monica|kate|stephanie|female|siri.*(voice 1|voice 2)/i;
 const MALE_VOICE = /alex|daniel|fred|tom\b|aaron|arthur|gordon|rishi|guy|davis|tony|jason|christopher|eric|roger|ryan|thomas|andrew|brian|steffan|oliver|evan|nathan|reed|rocko|ralph|albert|bruce|junior|william|liam|brandon|jacob|male|siri.*(voice 3|voice 4)/i;
 

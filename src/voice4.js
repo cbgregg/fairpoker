@@ -5,8 +5,8 @@
    ===================================================================== */
 const KOKORO_URL = window.KOKORO_URL || 'https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/dist/kokoro.web.js';
 // who sounds like whom: Kokoro's best-rated American and British voices
-const NEURAL_VOICE = { D:'bm_george', Hattie:'af_heart', Mae:'af_bella', Rosa:'af_nicole', Silas:'am_michael', Cyrus:'am_fenrir', Wyatt:'am_puck', Eli:'bm_fable', Jeb:'bm_lewis' };
-const NEURAL_FALLBACK = ['am_michael', 'af_sarah', 'am_eric', 'bf_emma', 'am_liam', 'af_kore'];
+const NEURAL_VOICE = { D:'bm_george', Hank:'am_onyx', Mack:'am_echo', Rocco:'bm_daniel', Silas:'am_michael', Cyrus:'am_fenrir', Wyatt:'am_puck', Eli:'bm_fable', Jeb:'bm_lewis' };
+const NEURAL_FALLBACK = ['am_michael', 'am_eric', 'am_liam', 'am_adam', 'bm_george', 'am_fenrir'];
 // emotion → speaking speed (Kokoro's only expressive control)
 const NEURAL_SPEED = { neutral:1, calm:.94, friendly:1.03, cocky:.93, excited:1.14, shout:1.12, angry:1.1, sad:.86, unfriendly:.97, whisper:.9 };
 const NN = { state:'idle', pct:0, err:'', worker:null, seq:0, pending:new Map(), cache:new Map(), queue:[], busy:false };

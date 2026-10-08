@@ -3,11 +3,11 @@
    speech bubbles and moving mouths. Toggle: Settings → Voices and dialogue.
    ===================================================================== */
 const VOICE_D = { speed:76, pitch:58, throat:132, mouth:128 };
-const VOICE_P = [
-  { speed:72, pitch:64, throat:128, mouth:128 }, { speed:82, pitch:72, throat:110, mouth:105 },
-  { speed:92, pitch:60, throat:190, mouth:190 }, { speed:84, pitch:36, throat:145, mouth:145 },
-  { speed:76, pitch:52, throat:150, mouth:160 }, { speed:70, pitch:82, throat:120, mouth:135 },
-  { speed:86, pitch:66, throat:170, mouth:150 }, { speed:78, pitch:46, throat:115, mouth:115 }
+const VOICE_P = [         // all men: SAM pitch numbers above 60 sit low
+  { speed:72, pitch:68, throat:128, mouth:128 }, { speed:82, pitch:76, throat:110, mouth:105 },
+  { speed:92, pitch:62, throat:190, mouth:190 }, { speed:84, pitch:84, throat:145, mouth:145 },
+  { speed:76, pitch:70, throat:150, mouth:160 }, { speed:70, pitch:88, throat:120, mouth:135 },
+  { speed:86, pitch:66, throat:170, mouth:150 }, { speed:78, pitch:80, throat:115, mouth:115 }
 ];
 const LINES = {
   shuffle:['Shuffle up and deal.', 'Cards in the air.', 'Good luck everyone.', 'Here we go again.', 'New hand. Ante up.', 'Fresh deck, fresh start.',
@@ -358,7 +358,7 @@ function yourTurnStart(){
   clearTimeout(nudgeT);
   const go = (ms, n) => { nudgeT = setTimeout(() => {
     if (!humanResolve || !TALK || TALK_MODE === 'basic') return;
-    const c = comsSeated(); if (c.length) sayAt(pick(c), 'nudge', 0, 1.3);
+    const c = comsSeated(); if (c.length) sayAt(pick(c), Math.random() < .4 ? 'roastYou' : 'nudge', 0, 1.3);
     if (n < 2) go(13000 + Math.random()*9000, n + 1);
   }, ms); };
   go(8000 + Math.random()*6000, 0);
@@ -457,6 +457,7 @@ setInterval(() => {
   const r = Math.random();
   if (!humanResolve && r < (TALK_MODE === 'chatty' ? .7 : .5) && startConvo()) return;
   const coms = comsSeated();
+  if (Math.random() < .45 && extraChatter()) return;
   if (Math.random() < .3 || !coms.length) sayLine('D', 'dealerChat');
   else sayLine(pick(coms), (TH.key === 'saloon' || TH.key === 'atari') && Math.random() < .4 ? TH.key : 'chatter');
 }, 500);

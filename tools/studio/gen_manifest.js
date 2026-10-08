@@ -2,8 +2,8 @@
 global.store={get:()=>null,set(){}}; global.clamp=(v,a,b)=>Math.max(a,Math.min(b,v)); global.G=null; global.H=null;
 global.document={addEventListener(){}}; global.$=()=>null; global.window={}; global.setInterval=()=>0;
 const fs=require('fs'), P='/tmp/claude-0/parts/';
-const NAMES = ['Hattie','Mae','Rosa','Silas','Cyrus','Wyatt','Eli','Jeb'];
-const src = ['voice.js','voice2.js','voice3.js'].map(f=>fs.readFileSync(P+f,'utf8')).join('\n');
+const NAMES = ['Hank','Mack','Rocco','Silas','Cyrus','Wyatt','Eli','Jeb'];
+const src = ['voice.js','voice2.js','voice3.js','voice4.js','voice5.js'].map(f=>fs.readFileSync(P+f,'utf8')).join('\n');
 eval(src + `
 const DEALER_SETS = new Set(['shuffle','dealt','flop','turn','river','showdown','win','winHand','split','allinD','bigBet','yourTurn','youWin','dealerChat','chide']);
 let seed = 7;

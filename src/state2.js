@@ -1,5 +1,5 @@
 /* ---------- game state ---------- */
-const NAMES = ['Hattie','Silas','Mae','Cyrus','Wyatt','Rosa','Eli','Jeb'];
+const NAMES = ['Hank','Silas','Mack','Cyrus','Wyatt','Rocco','Eli','Jeb'];
 const SKINS_T = ['#e2ad87','#c68e67','#a8714f','#8a5a3c','#d9a27a','#b8805c','#9c6a48','#e6b896'];
 const SLEEVES = ['#2b2a2e','#43302a','#24303f','#3d3b33','#2f3a2b','#4d3626','#1f2328','#3b2f2a'];
 const SLEEVES_MOD = ['#1d2a44','#3a3f47','#4a5a3a','#5a2430','#1a1c20','#2f4f6f','#6b5a44','#3d2f55'];

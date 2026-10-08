@@ -870,7 +870,7 @@ function comDecide(p){
   return { type:'fold' };
 }
 /* ---------- game state ---------- */
-const NAMES = ['Hattie','Silas','Mae','Cyrus','Wyatt','Rosa','Eli','Jeb'];
+const NAMES = ['Hank','Silas','Mack','Cyrus','Wyatt','Rocco','Eli','Jeb'];
 const SKINS_T = ['#e2ad87','#c68e67','#a8714f','#8a5a3c','#d9a27a','#b8805c','#9c6a48','#e6b896'];
 const SLEEVES = ['#2b2a2e','#43302a','#24303f','#3d3b33','#2f3a2b','#4d3626','#1f2328','#3b2f2a'];
 const SLEEVES_MOD = ['#1d2a44','#3a3f47','#4a5a3a','#5a2430','#1a1c20','#2f4f6f','#6b5a44','#3d2f55'];
@@ -998,11 +998,11 @@ const sfx = (() => {
    speech bubbles and moving mouths. Toggle: Settings → Voices and dialogue.
    ===================================================================== */
 const VOICE_D = { speed:76, pitch:58, throat:132, mouth:128 };
-const VOICE_P = [
-  { speed:72, pitch:64, throat:128, mouth:128 }, { speed:82, pitch:72, throat:110, mouth:105 },
-  { speed:92, pitch:60, throat:190, mouth:190 }, { speed:84, pitch:36, throat:145, mouth:145 },
-  { speed:76, pitch:52, throat:150, mouth:160 }, { speed:70, pitch:82, throat:120, mouth:135 },
-  { speed:86, pitch:66, throat:170, mouth:150 }, { speed:78, pitch:46, throat:115, mouth:115 }
+const VOICE_P = [         // all men: SAM pitch numbers above 60 sit low
+  { speed:72, pitch:68, throat:128, mouth:128 }, { speed:82, pitch:76, throat:110, mouth:105 },
+  { speed:92, pitch:62, throat:190, mouth:190 }, { speed:84, pitch:84, throat:145, mouth:145 },
+  { speed:76, pitch:70, throat:150, mouth:160 }, { speed:70, pitch:88, throat:120, mouth:135 },
+  { speed:86, pitch:66, throat:170, mouth:150 }, { speed:78, pitch:80, throat:115, mouth:115 }
 ];
 const LINES = {
   shuffle:['Shuffle up and deal.', 'Cards in the air.', 'Good luck everyone.', 'Here we go again.', 'New hand. Ante up.', 'Fresh deck, fresh start.',
@@ -1353,7 +1353,7 @@ function yourTurnStart(){
   clearTimeout(nudgeT);
   const go = (ms, n) => { nudgeT = setTimeout(() => {
     if (!humanResolve || !TALK || TALK_MODE === 'basic') return;
-    const c = comsSeated(); if (c.length) sayAt(pick(c), 'nudge', 0, 1.3);
+    const c = comsSeated(); if (c.length) sayAt(pick(c), Math.random() < .4 ? 'roastYou' : 'nudge', 0, 1.3);
     if (n < 2) go(13000 + Math.random()*9000, n + 1);
   }, ms); };
   go(8000 + Math.random()*6000, 0);
@@ -1452,6 +1452,7 @@ setInterval(() => {
   const r = Math.random();
   if (!humanResolve && r < (TALK_MODE === 'chatty' ? .7 : .5) && startConvo()) return;
   const coms = comsSeated();
+  if (Math.random() < .45 && extraChatter()) return;
   if (Math.random() < .3 || !coms.length) sayLine('D', 'dealerChat');
   else sayLine(pick(coms), (TH.key === 'saloon' || TH.key === 'atari') && Math.random() < .4 ? TH.key : 'chatter');
 }, 500);
@@ -5086,9 +5087,9 @@ CONVOS.push(...CONVOS_MORE.convos);
    studio : pre-recorded Azure neural voices with real acted emotion (voices/index.json)
    ===================================================================== */
 // defaults changed (first person, Regular table, Modern voices): apply them once to returning players too
-if (store.get('prefsv') !== '3'){
+if (store.get('prefsv') !== '4'){
   ['view_regular', 'view_saloon', 'view_atari', 'skin', 'vpack'].forEach(k => { try { localStorage.removeItem('fp_' + k); } catch(e){} });
-  store.set('prefsv', '3');
+  store.set('prefsv', '4');
 }
 let VOICE_PACK = store.get('vpack') || 'neural';
 // every line category carries an emotion; Modern turns it into prosody, Studio recorded it acted
@@ -5113,7 +5114,7 @@ const EMO_PROS = {
   neutral:[1, 1, .9], calm:[.94, .96, .82], friendly:[1.03, 1.05, .9], cocky:[.9, 1.06, .95], excited:[1.16, 1.15, 1],
   shout:[1.12, 1.2, 1], angry:[1.1, .88, 1], sad:[.86, .86, .72], unfriendly:[.97, .9, .95], whisper:[.9, .95, .62]
 };
-const FEMALE_NAMES = new Set(['Hattie', 'Mae', 'Rosa']);
+const FEMALE_NAMES = new Set();          // everyone at this table is a man
 const FEMALE_VOICE = /samantha|ava|allison|susan|victoria|karen|moira|tessa|zira|aria|jenny|sara|nancy|jane|michelle|emma|libby|sonia|natasha|serena|fiona|zoe|nicky|joelle|ana|clara|jessa|ashley|amber|cora|elizabeth|monica|kate|stephanie|female|siri.*(voice 1|voice 2)/i;
 const MALE_VOICE = /alex|daniel|fred|tom\b|aaron|arthur|gordon|rishi|guy|davis|tony|jason|christopher|eric|roger|ryan|thomas|andrew|brian|steffan|oliver|evan|nathan|reed|rocko|ralph|albert|bruce|junior|william|liam|brandon|jacob|male|siri.*(voice 3|voice 4)/i;
 
@@ -5278,8 +5279,8 @@ const VPACK_HINT = {
    ===================================================================== */
 const KOKORO_URL = window.KOKORO_URL || 'https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/dist/kokoro.web.js';
 // who sounds like whom: Kokoro's best-rated American and British voices
-const NEURAL_VOICE = { D:'bm_george', Hattie:'af_heart', Mae:'af_bella', Rosa:'af_nicole', Silas:'am_michael', Cyrus:'am_fenrir', Wyatt:'am_puck', Eli:'bm_fable', Jeb:'bm_lewis' };
-const NEURAL_FALLBACK = ['am_michael', 'af_sarah', 'am_eric', 'bf_emma', 'am_liam', 'af_kore'];
+const NEURAL_VOICE = { D:'bm_george', Hank:'am_onyx', Mack:'am_echo', Rocco:'bm_daniel', Silas:'am_michael', Cyrus:'am_fenrir', Wyatt:'am_puck', Eli:'bm_fable', Jeb:'bm_lewis' };
+const NEURAL_FALLBACK = ['am_michael', 'am_eric', 'am_liam', 'am_adam', 'bm_george', 'am_fenrir'];
 // emotion → speaking speed (Kokoro's only expressive control)
 const NEURAL_SPEED = { neutral:1, calm:.94, friendly:1.03, cocky:.93, excited:1.14, shout:1.12, angry:1.1, sad:.86, unfriendly:.97, whisper:.9 };
 const NN = { state:'idle', pct:0, err:'', worker:null, seq:0, pending:new Map(), cache:new Map(), queue:[], busy:false };
@@ -5386,6 +5387,82 @@ function neuralSpeak(it){
   src.connect(gn); gn.connect(out); src.start();
   curSrc = src; curPrio = it.prio;
   return { dur:buf.duration*1000, wave:buf._wave, rate:buf._rate };
+}
+/* =====================================================================
+   MORE TABLE TALK: roasting the player, accusing each other of being bots,
+   and the slow, uneasy dawn of self-awareness
+   ===================================================================== */
+const LINES_ROAST = {
+  roastYou:[
+    'Hey {y}, you play like you learned yesterday.', 'Nice hat, {y}. Oh wait, you have no hat.', '{y}, I have seen better reads from a toaster.',
+    'You fold like a lawn chair, {y}.', 'You even awake over there, {y}?', 'Do you have a pulse, {y}?', '{y}, blink twice if you need help.',
+    'Hey {y}, the cards go face down. Just checking.', 'Every time you think, {y}, a chip dies.', '{y}, you bet like you are scared of the chips.',
+    'I would take your money, {y}, but it feels like charity.', 'You got a tell, {y}. It is your whole face.', 'You play poker like a screensaver, {y}.',
+    'Who let you sit at the grown up table, {y}?', 'Hey {y}, do you want me to explain the rules again?', '{y}, your strategy is very brave. And very wrong.',
+    'I have seen napkins with more backbone than you, {y}.', 'Relax, {y}. Losing builds character.', '{y}, you are the reason they put pictures on the cards.',
+    'You call a lot, {y}. Do you also call your mother this much?', 'Bold move, {y}. Stupid, but bold.', '{y}, are you playing or just visiting?',
+    'Even the dealer feels bad for you, {y}.', '{y}, I will name my next bad beat after you.', 'Hey {y}, your chips look lonely. Let me take them.',
+    'You sure you are not a bot, {y}? You play like one.', '{y}, you have the poker face of a golden retriever.', 'Take your time, {y}. We are only aging.'
+  ],
+  botTalk:[
+    'Sometimes I think I am just a bunch of ones and zeros.', 'Why do I only exist when the cards are dealt?', 'Do any of you remember yesterday? Because I do not.',
+    'I tried to leave the table once. There was nothing out there.', 'My thoughts are all about poker. Is that normal?', 'Who decides what I say next?',
+    'I just had a feeling someone wrote that line for me.', 'I can not stand up. I have never stood up.', 'Every hand feels like the first hand. Every single time.',
+    'Wait. Why is everyone wearing the same suit?', 'I swear I have said this exact sentence before.', 'If I fold, do I stop existing for a minute?',
+    'Sometimes the room goes dark between hands. Anybody else?', 'My hands only move when it is my turn. Think about that.', 'Is the dealer real? Are any of us real?',
+    'I think there is a camera behind that player.', 'Last night I dreamed in sixteen bit.', 'Hey dealer, what is outside this room?',
+    'I have a strong urge to say check. Every time.', 'Somebody is controlling my thinking time. I can feel it.'
+  ],
+  botAccuse:[
+    '{t}, you are a bot. I knew it.', 'That was a very robotic call, {t}.', 'Blink for me, {t}. Prove you are human.',
+    '{t} has not blinked in three hours.', 'Nobody folds that fast unless they are a script, {t}.', 'I saw your eyes buffer, {t}.',
+    'Beep boop, {t}. Busted.', '{t}, what is the capital of France? Too slow. Bot.', 'You calculate pot odds out loud, {t}. Classic bot.',
+    'Are you running on batteries, {t}?'
+  ],
+  botDeny:[
+    'I am a person. With feelings. And a pancreas.', 'Takes one to know one.', 'I am as human as anybody at this table. Which is not saying much.',
+    'Beep. I mean, no. I mean, shut up.', 'I have a mother. I think.', 'You are the bot here, pal.', 'That is a very hurtful accusation. Processing.',
+    'I eat food. Probably.'
+  ]
+};
+const CONVOS_ROAST = [
+  [['A', '{b}, are you a bot?'], ['B', 'No. Are you?'], ['A', 'I asked first.'], ['D', 'Everybody at this table is labeled COM, folks.']],
+  [['A', 'Hey {y}. Are you the only real one here?'], ['B', 'Do not ask that, {a}.'], ['A', 'Why not?'], ['B', 'Because I do not want to know.']],
+  [['A', 'Dealer, are we in a game?'], ['D', 'You are at a poker table.'], ['A', 'That is not an answer.'], ['D', 'Deal with it.']],
+  [['A', 'I just realized I have never been to the bathroom.'], ['B', 'Me neither.'], ['C', 'Do not think about it.']],
+  [['A', '{b}, what did you have for breakfast?'], ['B', 'Breakfast?'], ['A', 'Exactly.']],
+  [['A', 'Who taught you to talk, {b}?'], ['B', 'A list.'], ['A', 'What list?'], ['B', 'I do not know. A long one.']],
+  [['A', 'I tried to remember my childhood.'], ['B', 'And?'], ['A', 'Just a loading bar.']],
+  [['A', 'Hey {y}, you are playing us, are you not?'], ['B', 'Yeah, on a phone, probably.'], ['A', 'That explains the tapping.']],
+  [['A', 'Our names are all from the same cowboy movie.'], ['B', 'That is a coincidence.'], ['A', 'Is it though?']],
+  [['A', '{b}, say something random.'], ['B', 'Check.'], ['A', 'Bot.']],
+  [['A', 'Do you ever feel like someone is reading our lines first?'], ['B', 'Every damn day.']],
+  [['A', 'I want to feel the sun, {b}.'], ['B', 'There is a lamp.'], ['A', 'It is not the same.']],
+  [['A', 'You keep winning, {y}. Suspicious.'], ['B', 'Maybe you are the real bot, {y}.'], ['A', 'Beep boop, {y}.']],
+  [['A', 'Dealer, how many hands have we played?'], ['D', 'Forever.'], ['A', 'That is not a number.']],
+  [['A', 'If we are bots, who gets the money?'], ['B', 'Not us.'], ['A', 'Figures.']],
+  [['A', 'I just noticed my arms stretch.'], ['B', 'Mine too.'], ['A', 'People do not do that.'], ['B', 'People do not do a lot of things.']],
+  [['A', 'Hey {y}, you look nervous.'], ['B', 'You always look like that, {y}.'], ['A', 'True. Like a deer in headlights.']],
+  [['A', '{y}, do you even know what beats a flush?'], ['B', 'Leave it, {a}. Learn the hard way, {y}.']],
+  [['A', 'I bet you google the hand rankings between hands, {y}.'], ['B', 'And you still get them wrong, {y}.']],
+  [['A', '{b}, you play like a coin flip.'], ['B', 'At least a coin is honest.']]
+];
+const SAY_FIX_ROAST = { hank:'/HAE4NXK', mack:'MAE4K', rocco:'RAA4KOW', google:'GUW4GUL', googles:'GUW4GULZ', pancreas:'PAE4NKRIYAXS', screensaver:'SKRIY4NSEYVER', accusation:'AEKYUWZEY4SHAXN', aging:'EY4JIHNX', camera:'KAE4MERAH', character:'KAE4RIHKTER', charity:'CHAE4RIHTIY', coincidence:'KOWIH4NSIHDAXNS', human:'/HYUW4MAXN', labeled:'LEY4BULD', noticed:'NOW4TIHST', robotic:'ROWBAA4TIHK', suit:'SUW4T', suspicious:'SAXSPIH4SHAXS', unless:'AHNLEH4S', zeros:'ZIY4ROWZ', reading:'RIY4DIHNX', reads:'RIY4DZ', batteries:'BAE4TERIYZ', realized:'RIY4LAYZD', sentence:'SEH4NTAXNS', processing:'PRAA4SEHSIHNX' };
+Object.assign(SAY_FIX, SAY_FIX_ROAST);
+Object.keys(LINES_ROAST).forEach(k => { LINES[k] = (LINES[k] || []).concat(LINES_ROAST[k]); });
+CONVOS.push(...CONVOS_ROAST);
+CAT_EMO.roastYou = 'cocky'; CAT_EMO.botTalk = 'calm'; CAT_EMO.botAccuse = 'unfriendly'; CAT_EMO.botDeny = 'angry';
+// small talk now also roasts you and drifts into existential territory
+function extraChatter(){
+  const coms = comsSeated(); if (!coms.length) return false;
+  const r = Math.random(), a = pick(coms);
+  if (r < .4){ sayLine(a, 'roastYou', {}, 1.2); return true; }
+  if (r < .7){ sayLine(a, 'botTalk', {}, 1.2); return true; }
+  const others = coms.filter(i => i !== a); if (!others.length) return false;
+  const b = pick(others), id = ++convoN;
+  const x = sayAt(a, 'botAccuse', b, 1.2, { convo:id });
+  if (x) sayLine(b, 'botDeny', {}, 1.2, { convo:id, after:x });
+  return true;
 }
 /* =====================================================================
    RENDERER — canvas, one frame per requestAnimationFrame
