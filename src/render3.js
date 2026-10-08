@@ -708,7 +708,7 @@ function drawScene(g, t){
   if (FP()){ drawSpeech(g, t); if (h && !h.done && !h.banner && TH.key !== 'atari') drawPotPill(g); }
   drawSeats(g);
   drawYou(g, t);
-  if (FP()) drawTopBoard(g);
+  drawTopBoard(g);
   if (!FP()) drawSpeech(g, t);
   drawBanner(g);
 }
@@ -787,7 +787,7 @@ const BADGE_COL = {
   saloon:{ fold:['#5a1e16','#f3d9cf'], check:['#2f4a22','#e9dcc0'], call:['#2f4a22','#e9dcc0'], bet:['#5a3a14','#f1e3c3'], raise:['#5a3a14','#f1e3c3'],
     allin:['#c9a04a','#2a1a06'], win:['#6d8a3a','#f6ecd2'], turn:['#d9b061','#1e1406'], think:['#4a3a2a','#f1d9a0'], '':['#3a2a1a','#e9dcc0'], out:['#2a2018','#9c8f78'] }
 };
-const topBand = () => { if (!FP() || !H || !H.board.length || H.boardGone) return 0; const R = topBoardRect(); return R.y0 + R.hh + 40; };
+const topBand = () => (!H || H.boardGone ? 0 : topRowH());
 function drawSeats(g){
   if (!FP()){ G.players.forEach((p, i) => { if (i) drawSeat(g, p, i); }); return; }
   const h = H, tags = [];
@@ -957,8 +957,9 @@ function topBoardRect(){
   const w = pix && !classic ? (CW < 520 ? 40 : 56) : Math.round(Math.min(CW*.125, 60)), hh = classic ? Math.round(w*1.42) : w*1.5, gap = Math.round(w*.1);
   return { pix, classic, w, hh, gap, x0:Math.round(CW/2 - (5*w + 4*gap)/2), y0:10 };
 }
+function topRowH(){ const R = topBoardRect(), fs = R.pix ? 10 : TH.key === 'saloon' ? 15 : 13; return R.y0 + R.hh + 8 + fs + 12 + 8; }
 function drawTopBoard(g){
-  const h = H; if (!h || h.boardGone || !h.board.length) return;
+  const h = H; if (!h || h.boardGone || h.done && !h.board.length) return;
   const R = topBoardRect(), { pix, classic, w, hh, gap, x0, y0 } = R;
   g.save(); g.imageSmoothingEnabled = classic;
   // empty slots so the row reads as five places from the flop on
@@ -979,7 +980,7 @@ function drawTopBoard(g){
   // your best hand right now
   const p = me();
   if (p.hole.length === 2 && h.heroFlip >= 1 && !p.folded && p.inHand){
-    const name = handName(evaluate([...p.hole, ...h.board]));
+    const name = h.board.length ? handName(evaluate([...p.hole, ...h.board])) : preName(p.hole);
     const sal = TH.key === 'saloon', fs = pix ? 10 : sal ? 15 : 13;
     g.font = pix ? font(fs, F_UI) : sal ? font(fs, F_OLD) : font(fs, F_UI, '800');
     const label = pix || sal ? name : name.toUpperCase(), tw = g.measureText(label).width + 22, th = fs + 12, ty = y0 + hh + 8;

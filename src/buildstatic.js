@@ -78,6 +78,9 @@ function buildStatic(){
   if (!FP()){
     og.save();
     og.beginPath(); og.rect(-20, -20, CW + 40, CH + 40); tracePoly(og, tablePoly(0)); og.clip('evenodd');
+    // only the shoulders sit over the arms (so sleeves grow out of them); below the armpits the arms are in front of the body
+    const dt = proj({ x:TH.W/2, y:.5 }), dk = U*dt.s;
+    og.beginPath(); og.rect(-20, -20, CW + 40, dt.y - 4.5*dk + 20); og.clip();
     paintDealerTorso(og, true);
     og.restore();
   }

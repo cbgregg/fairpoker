@@ -184,10 +184,11 @@ function fit(){
   const minY = t0.y - (FP() || TH.key === 'atari' ? 54 : 30)*t0.s;
   const maxY = projAt({ x:TH.W/2, y:TH.H - (TH.nearCut || 0) }, 1, 0, 0).y + TH.bottomPad;
   const minX = Math.min(...pts.map(p => p.x)), maxX = Math.max(...pts.map(p => p.x));
-  U = FP() ? Math.min(CH*.62/(maxY - minY), CW*.92/((maxX - minX)*TH.wScale)) : Math.min(CW / ((maxX - minX)*TH.wScale), CH / (maxY - minY));
+  const band = FP() ? 0 : topRowH(), CHa = CH - band;
+  U = FP() ? Math.min(CH*.62/(maxY - minY), CW*.92/((maxX - minX)*TH.wScale)) : Math.min(CW / ((maxX - minX)*TH.wScale), CHa / (maxY - minY));
   P = TH.pf * TH.H * U;
   CX0 = CW/2;
-  CY0 = FP() ? CH*(CW < CH*.9 ? .23 : .13) - minY*U : (CH - (maxY - minY)*U) - minY*U;          // spare height goes above the dealer
+  CY0 = FP() ? CH*(CW < CH*.9 ? .23 : .13) - minY*U : band + (CHa - (maxY - minY)*U) - minY*U;          // spare height goes above the dealer
   staticDirty = true;
   drawFrame(performance.now());
 }

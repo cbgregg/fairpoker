@@ -191,6 +191,8 @@ body.skin-saloon .info-2{font-weight:400}
 .hud .ebar i.bad{background:#f0a04b}
 .hud .ebar u{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.5)}
 body.skin-atari .hud .ebar,body.skin-atari .hud .ebar i{transition:none}
+body.skin-atari .hud .h1{font-size:11px !important}body.skin-atari .hud .h2{font-size:9px !important}body.skin-atari .pre button,body.skin-atari .abtn{font-size:9px !important}
+.hud .h2 .draw{font-style:normal;color:var(--accent)}
 .ico.off{opacity:.55}
 .me-st{color:var(--accent);font-weight:800;padding-right:8px;margin-right:2px;border-right:1px solid var(--line)}
 .strip b{color:var(--accent);font-weight:700;overflow:hidden;text-overflow:ellipsis}
@@ -5440,10 +5442,11 @@ function fit(){
   const minY = t0.y - (FP() || TH.key === 'atari' ? 54 : 30)*t0.s;
   const maxY = projAt({ x:TH.W/2, y:TH.H - (TH.nearCut || 0) }, 1, 0, 0).y + TH.bottomPad;
   const minX = Math.min(...pts.map(p => p.x)), maxX = Math.max(...pts.map(p => p.x));
-  U = FP() ? Math.min(CH*.62/(maxY - minY), CW*.92/((maxX - minX)*TH.wScale)) : Math.min(CW / ((maxX - minX)*TH.wScale), CH / (maxY - minY));
+  const band = FP() ? 0 : topRowH(), CHa = CH - band;
+  U = FP() ? Math.min(CH*.62/(maxY - minY), CW*.92/((maxX - minX)*TH.wScale)) : Math.min(CW / ((maxX - minX)*TH.wScale), CHa / (maxY - minY));
   P = TH.pf * TH.H * U;
   CX0 = CW/2;
-  CY0 = FP() ? CH*(CW < CH*.9 ? .23 : .13) - minY*U : (CH - (maxY - minY)*U) - minY*U;          // spare height goes above the dealer
+  CY0 = FP() ? CH*(CW < CH*.9 ? .23 : .13) - minY*U : band + (CHa - (maxY - minY)*U) - minY*U;          // spare height goes above the dealer
   staticDirty = true;
   drawFrame(performance.now());
 }
@@ -7167,7 +7170,7 @@ function drawScene(g, t){
   if (FP()){ drawSpeech(g, t); if (h && !h.done && !h.banner && TH.key !== 'atari') drawPotPill(g); }
   drawSeats(g);
   drawYou(g, t);
-  if (FP()) drawTopBoard(g);
+  drawTopBoard(g);
   if (!FP()) drawSpeech(g, t);
   drawBanner(g);
 }
@@ -7246,7 +7249,7 @@ const BADGE_COL = {
   saloon:{ fold:['#5a1e16','#f3d9cf'], check:['#2f4a22','#e9dcc0'], call:['#2f4a22','#e9dcc0'], bet:['#5a3a14','#f1e3c3'], raise:['#5a3a14','#f1e3c3'],
     allin:['#c9a04a','#2a1a06'], win:['#6d8a3a','#f6ecd2'], turn:['#d9b061','#1e1406'], think:['#4a3a2a','#f1d9a0'], '':['#3a2a1a','#e9dcc0'], out:['#2a2018','#9c8f78'] }
 };
-const topBand = () => { if (!FP() || !H || !H.board.length || H.boardGone) return 0; const R = topBoardRect(); return R.y0 + R.hh + 40; };
+const topBand = () => (!H || H.boardGone ? 0 : topRowH());
 function drawSeats(g){
   if (!FP()){ G.players.forEach((p, i) => { if (i) drawSeat(g, p, i); }); return; }
   const h = H, tags = [];
@@ -7416,8 +7419,9 @@ function topBoardRect(){
   const w = pix && !classic ? (CW < 520 ? 40 : 56) : Math.round(Math.min(CW*.125, 60)), hh = classic ? Math.round(w*1.42) : w*1.5, gap = Math.round(w*.1);
   return { pix, classic, w, hh, gap, x0:Math.round(CW/2 - (5*w + 4*gap)/2), y0:10 };
 }
+function topRowH(){ const R = topBoardRect(), fs = R.pix ? 10 : TH.key === 'saloon' ? 15 : 13; return R.y0 + R.hh + 8 + fs + 12 + 8; }
 function drawTopBoard(g){
-  const h = H; if (!h || h.boardGone || !h.board.length) return;
+  const h = H; if (!h || h.boardGone || h.done && !h.board.length) return;
   const R = topBoardRect(), { pix, classic, w, hh, gap, x0, y0 } = R;
   g.save(); g.imageSmoothingEnabled = classic;
   // empty slots so the row reads as five places from the flop on
@@ -7438,7 +7442,7 @@ function drawTopBoard(g){
   // your best hand right now
   const p = me();
   if (p.hole.length === 2 && h.heroFlip >= 1 && !p.folded && p.inHand){
-    const name = handName(evaluate([...p.hole, ...h.board]));
+    const name = h.board.length ? handName(evaluate([...p.hole, ...h.board])) : preName(p.hole);
     const sal = TH.key === 'saloon', fs = pix ? 10 : sal ? 15 : 13;
     g.font = pix ? font(fs, F_UI) : sal ? font(fs, F_OLD) : font(fs, F_UI, '800');
     const label = pix || sal ? name : name.toUpperCase(), tw = g.measureText(label).width + 22, th = fs + 12, ty = y0 + hh + 8;
@@ -7545,6 +7549,9 @@ function buildStatic(){
   if (!FP()){
     og.save();
     og.beginPath(); og.rect(-20, -20, CW + 40, CH + 40); tracePoly(og, tablePoly(0)); og.clip('evenodd');
+    // only the shoulders sit over the arms (so sleeves grow out of them); below the armpits the arms are in front of the body
+    const dt = proj({ x:TH.W/2, y:.5 }), dk = U*dt.s;
+    og.beginPath(); og.rect(-20, -20, CW + 40, dt.y - 4.5*dk + 20); og.clip();
     paintDealerTorso(og, true);
     og.restore();
   }
@@ -7792,7 +7799,7 @@ function drawAtariFrame(t, sx, sy){
   cx.drawImage(lowCv, 0, 0, w*PIX*DPR, h*PIX*DPR);
   cx.imageSmoothingEnabled = true;
   cx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  if (FP()) drawAtariBoard(cx);
+  drawAtariBoard(cx);
   drawYouPixel(t);
   cx.setTransform(DPR, 0, 0, DPR, 0, 0);
   drawAtariLabels(cx, t);
@@ -8974,8 +8981,8 @@ function hudHTML(status){
   const callTxt = !live_ ? '' : toCall > 0 ? `Call <b>${money(toCall)}</b> · Need <b>${Math.round(need*100)}%</b>` : humanResolve ? '<span class="free">Free to check</span>' : '';
   const bar = `<div class="ebar">${ODDS && live_ && eq != null ? `<i class="${toCall > 0 && !good ? 'bad' : 'good'}" style="width:${(eq*100).toFixed(1)}%"></i>${toCall > 0 ? `<u style="left:${(need*100).toFixed(1)}%"></u>` : ''}` : ''}</div>`;
   // first person already shows your hand above the table, so the bar carries the price instead
-  const mid = FP() ? `<span class="hn">${callTxt}</span>` : `<span class="hn">${esc(hand)}${sub ? ` <i>${esc(sub)}</i>` : ''}</span>`;
-  const left2 = FP() ? '' : callTxt;
+  const mid = `<span class="hn">${callTxt}</span>`;      // your hand is named in the row above the table
+  const left2 = sub ? `<i class="draw">${esc(sub)}</i>` : '';
   return `<div class="strip hud">
     <div class="h1"><span class="me-st" title="Your stack">${money(p.chips)}</span>${mini}${mid}${eqTxt}</div>
     ${bar}

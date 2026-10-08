@@ -307,8 +307,8 @@ function hudHTML(status){
   const callTxt = !live_ ? '' : toCall > 0 ? `Call <b>${money(toCall)}</b> · Need <b>${Math.round(need*100)}%</b>` : humanResolve ? '<span class="free">Free to check</span>' : '';
   const bar = `<div class="ebar">${ODDS && live_ && eq != null ? `<i class="${toCall > 0 && !good ? 'bad' : 'good'}" style="width:${(eq*100).toFixed(1)}%"></i>${toCall > 0 ? `<u style="left:${(need*100).toFixed(1)}%"></u>` : ''}` : ''}</div>`;
   // first person already shows your hand above the table, so the bar carries the price instead
-  const mid = FP() ? `<span class="hn">${callTxt}</span>` : `<span class="hn">${esc(hand)}${sub ? ` <i>${esc(sub)}</i>` : ''}</span>`;
-  const left2 = FP() ? '' : callTxt;
+  const mid = `<span class="hn">${callTxt}</span>`;      // your hand is named in the row above the table
+  const left2 = sub ? `<i class="draw">${esc(sub)}</i>` : '';
   return `<div class="strip hud">
     <div class="h1"><span class="me-st" title="Your stack">${money(p.chips)}</span>${mini}${mid}${eqTxt}</div>
     ${bar}

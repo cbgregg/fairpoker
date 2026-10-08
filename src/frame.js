@@ -65,7 +65,7 @@ function drawAtariFrame(t, sx, sy){
   cx.drawImage(lowCv, 0, 0, w*PIX*DPR, h*PIX*DPR);
   cx.imageSmoothingEnabled = true;
   cx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  if (FP()) drawAtariBoard(cx);
+  drawAtariBoard(cx);
   drawYouPixel(t);
   cx.setTransform(DPR, 0, 0, DPR, 0, 0);
   drawAtariLabels(cx, t);
