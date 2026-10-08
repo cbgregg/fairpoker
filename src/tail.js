@@ -66,11 +66,11 @@ $('#t-auto').onchange = () => { if (!G) return; G.cfg.auto = $('#t-auto').checke
 $('#t-show').onchange = () => { if (!G) return; G.cfg.showCom = $('#t-show').checked; if (G.cfg.showCom) logLine('Practice view on: COM cards are visible to you.', 'st'); };
 $('#t-fps').onchange = () => { showFps = $('#t-fps').checked; };
 $('#t-sound').checked = sfx.on;
-setSeg('#seg-vpack', VOICE_PACK); $('#vpackHint').textContent = VPACK_HINT[VOICE_PACK]; studioLoad();
+setSeg('#seg-vpack', VOICE_PACK); $('#vpackHint').textContent = VPACK_HINT[VOICE_PACK]; studioLoad(); if (VOICE_PACK === 'neural') neuralInit();
 $('#seg-vpack').onclick = e => {
   const b = e.target.closest('button[data-v]'); if (!b || b.disabled) return;
   setVoicePack(b.dataset.v); sfx.init();
-  if (TALK) setTimeout(() => say('D', b.dataset.v === 'retro' ? 'Retro voices.' : b.dataset.v === 'modern' ? 'Modern voices. How do I sound?' : 'Studio voices. Much better.', 2, { basic:true }), 150);
+  if (TALK) setTimeout(() => say('D', b.dataset.v === 'retro' ? 'Retro voices.' : b.dataset.v === 'neural' ? 'Neural voices. Give me a second to warm up.' : b.dataset.v === 'modern' ? 'Modern voices. How do I sound?' : 'Studio voices. Much better.', 2, { basic:true }), 150);
 };
 setSeg('#seg-talk', TALK_MODE); $('#talkHint').textContent = TALK_HINT[TALK_MODE];
 $('#t-curse').checked = CURSE;

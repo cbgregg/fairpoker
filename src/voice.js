@@ -185,6 +185,7 @@ function say(k, text, prio = 1, o = {}){
     act:VACT, street:H ? H.street : -1, hand:G.handNo, live:!!o.live || (!o.convo && prio < 2),
     tpl:o.tpl || null, emo:emoOf(o.set || '', text) };
   if (VOICE_PACK === 'studio') studioPrefetch(it);
+  if (VOICE_PACK === 'neural') neuralPrefetch(it);
   VQ.push(it); pumpVoice();
   return it.id;
 }
@@ -226,6 +227,12 @@ function pumpVoice(){
   }
   if (!best || now < lastEnd + (best.k === lastK && !best.convo ? best.gap*.5 : best.gap)) return;
   if (VOICE_PACK === 'studio' && now - best.at < 900 && !studioReady(best)) return;     // give the recording a moment to load
+  if (VOICE_PACK === 'neural' && NN.state === 'ready' && !neuralReady(best)){
+    // the model is still rendering this line: wait a little, then say the plain action word or let the remark go
+    const basicOk = best.set && BASIC[best.set] && NN.cache.has(neuralVoiceOf(best.k) + '|' + (NEURAL_SPEED[CAT_EMO[best.set]] || 1).toFixed(2) + '|' + BASIC[best.set][0]);
+    if (now - best.at < (basicOk ? 700 : 2600)) return;
+    if (!basicOk && !(best.prio >= 2)){ VQ.splice(VQ.indexOf(best), 1); return; }
+  }
   VQ.splice(VQ.indexOf(best), 1);
   speak(best);
 }
@@ -235,9 +242,10 @@ function speak(it){
   if (window.__onSpeak) window.__onSpeak(it, k === 'D' ? 'DEALER' : G.players[k].name);
   let r = null;
   if (VOICE_PACK === 'studio') r = studioSpeak(it);
-  if (!r && VOICE_PACK !== 'retro') r = modernSpeak(it);
+  if (!r && VOICE_PACK === 'neural') r = neuralSpeak(it);
+  if (!r && (VOICE_PACK === 'modern' || VOICE_PACK === 'studio')) r = modernSpeak(it);
   if (!r) r = samSpeak(it);
-  talking[k] = { text, t0:now, until:now + r.dur + 900, end:now + r.dur, wave:r.wave };
+  talking[k] = { text:it.text, t0:now, until:now + r.dur + 900, end:now + r.dur, wave:r.wave, rate:r.rate };
   lastEnd = now + r.dur; lastK = k;
   spoken.add(it.id); if (spoken.size > 400) spoken.clear();
   // the dealer occasionally minds the language
@@ -360,9 +368,9 @@ function yourTurnEnd(){ clearTimeout(nudgeT); }
 function mouthOpen(k, t){
   const s = talking[k]; if (!s || t < s.t0 || t > s.end) return 0;
   if (!s.wave) return .5 + .5*Math.sin((t - s.t0)/60);
-  const i0 = Math.floor((t - s.t0)/1000*22050), w = s.wave; let a = 0;
-  for (let i = i0; i < i0 + 400 && i < w.length; i += 4) a += Math.abs(w[i]);
-  return clamp(a/100*3, 0, 1);
+  const rate = s.rate || 22050, n = Math.round(400*rate/22050), i0 = Math.floor((t - s.t0)/1000*rate), w = s.wave; let a = 0;
+  for (let i = i0; i < i0 + n && i < w.length; i += 4) a += Math.abs(w[i]);
+  return clamp(a/(n/4)*3, 0, 1);
 }
 // speech bubbles, drawn over the scene
 function drawSpeech(g, t){

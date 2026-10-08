@@ -528,6 +528,7 @@ function applySkin(key){
 }
 
 async function startHand(){
+  if (VOICE_PACK === 'neural') neuralWarm();
   if (dealing || !G) return;
   clearTimeout(autoTimer);
   const prev = H;

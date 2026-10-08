@@ -6,11 +6,11 @@
    studio : pre-recorded Azure neural voices with real acted emotion (voices/index.json)
    ===================================================================== */
 // defaults changed (first person, Regular table, Modern voices): apply them once to returning players too
-if (store.get('prefsv') !== '2'){
+if (store.get('prefsv') !== '3'){
   ['view_regular', 'view_saloon', 'view_atari', 'skin', 'vpack'].forEach(k => { try { localStorage.removeItem('fp_' + k); } catch(e){} });
-  store.set('prefsv', '2');
+  store.set('prefsv', '3');
 }
-let VOICE_PACK = store.get('vpack') || 'modern';
+let VOICE_PACK = store.get('vpack') || 'neural';
 // every line category carries an emotion; Modern turns it into prosody, Studio recorded it acted
 const CAT_EMO = {
   check:'calm', call:'neutral', bet:'cocky', raise:'cocky', allin:'shout', fold:'sad', thinking:'whisper',
@@ -38,7 +38,7 @@ const FEMALE_VOICE = /samantha|ava|allison|susan|victoria|karen|moira|tessa|zira
 const MALE_VOICE = /alex|daniel|fred|tom\b|aaron|arthur|gordon|rishi|guy|davis|tony|jason|christopher|eric|roger|ryan|thomas|andrew|brian|steffan|oliver|evan|nathan|reed|rocko|ralph|albert|bruce|junior|william|liam|brandon|jacob|male|siri.*(voice 3|voice 4)/i;
 
 /* ---------- Modern: device voices ---------- */
-let MV_LIST = [], MV_PICK = {};
+let MV_LIST = [], MV_PICK = {}; const MV_KEEP = [];
 function mvRefresh(){
   if (!('speechSynthesis' in window)) return;
   const score = v => (/natural|neural|premium|enhanced|online/i.test(v.name) ? 6 : 0) + (/en[-_]US/i.test(v.lang) ? 2 : /en[-_](GB|AU|IE|CA)/i.test(v.lang) ? 1 : 0) + (v.localService === false ? 1 : 0)
@@ -58,6 +58,7 @@ function mvFor(k){
   const v = MV_LIST.find(v => fits(v) && !taken.has(v.voiceURI)) || MV_LIST.find(fits) || MV_LIST[0] || null;
   // two players on the same voice still sound different: a per-player pitch offset
   const seed = [...who].reduce((a, c) => a + c.charCodeAt(0), 0);
+  if (!v) return null;                      // voices not loaded yet: ask again next line
   MV_PICK[who] = v ? { voice:v, voiceURI:v.voiceURI, pitch:who === 'D' ? .92 : .9 + (seed % 7)*.035, rate:1 + ((seed >> 2) % 5 - 2)*.03 } : null;
   return MV_PICK[who];
 }
@@ -80,6 +81,8 @@ function modernSpeak(it){
     if (s && s.text === text){ s.t0 = t; s.end = t + est*1.6; s.until = s.end + 900; }
     if (lastK === k) lastEnd = Math.max(lastEnd, t + est);
   };
+  MV_KEEP.push(u); if (MV_KEEP.length > 8) MV_KEEP.shift();      // iOS drops events of utterances it garbage-collects
+  if (speechSynthesis.paused) speechSynthesis.resume();
   speechSynthesis.speak(u);
   curSrc = { stop(){ try { speechSynthesis.cancel(); } catch(e){} } };
   return { dur:est, wave:null };
@@ -89,7 +92,7 @@ let mvPrimed = false;
 ['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, () => {
   if (mvPrimed || !('speechSynthesis' in window)) return;
   mvPrimed = true;
-  try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch(e){}
+  try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance('.'); u.volume = .01; u.rate = 2; speechSynthesis.speak(u); mvRefresh(); } catch(e){}
 }, { passive:true }));
 
 /* ---------- Studio: pre-recorded clips ---------- */
@@ -179,9 +182,12 @@ function setVoicePack(v){
   setSeg('#seg-vpack', v);
   const h = $('#vpackHint'); if (h) h.textContent = VPACK_HINT[v];
   if (v === 'studio') studioLoad();
+  if (v === 'neural') neuralInit();
+  neuralStatus();
 }
 const VPACK_HINT = {
   retro:'1982 robot voices. Works everywhere.',
+  neural:'Open-source neural voices (Kokoro) running on this device. One-time download of about 90 MB, then offline.',
   modern:'Your device\'s own voices. In Edge you get Microsoft\'s Natural voices, on iPhone and Mac the Siri-style ones. Emotion comes from pitch, speed and volume.',
   studio:'Pre-recorded neural voices with real acted emotion. Lines that were not recorded use the Modern voice.'
 };
