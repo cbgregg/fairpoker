@@ -7,11 +7,14 @@ const THEMES = {
   regular:{ ...CAMERA, key:'regular', cardStyle:'modern' },
   saloon: { ...CAMERA, key:'saloon',  cardStyle:'vintage' },
   // first person: camera low at your seat, strong perspective; rendered at low resolution in an Atari 8-bit palette
-  atari:  { ...CAMERA, key:'atari', cardStyle:'pixel' }
+  atari:  { ...CAMERA, key:'atari', cardStyle:'pixel' },
+  // flat screens: a text terminal and a video poker cabinet
+  cli:    { ...CAMERA, key:'cli', cardStyle:'modern', flat:true },
+  vpoker: { ...CAMERA, key:'vpoker', cardStyle:'modern', flat:true }
 };
 const FPPORT = { w:1.04, tilt:63, pf:.78, cardW:12 };          // phone held upright: step back and look down a bit so every seat fits
 const FPCAM = { view:'first', cardW:8.4, tilt:71, pf:.78, wScale:.62, bottomPad:0, nearCut:20 };
-const themeFor = (key, view) => ({ ...THEMES[key], ...(key === 'atari' && !PIXEL_DECK ? { cardStyle:'modern' } : {}), ...(view === 'first' ? FPCAM : { view:'above' }) });
+const themeFor = (key, view) => ({ ...THEMES[key], ...(key === 'atari' && !PIXEL_DECK ? { cardStyle:'modern' } : {}), ...(view === 'first' && !THEMES[key].flat ? FPCAM : { view:'above' }) });
 const FP = () => TH.view === 'first';
 let TH = themeFor('regular', 'above');
 const cv = $('#cv'), cx = cv.getContext('2d');

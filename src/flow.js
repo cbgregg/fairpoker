@@ -518,7 +518,10 @@ function applySkin(key){
   cfg.skin = key;
   TH = themeFor(key, viewFor(key));
   document.body.classList.toggle('skin-saloon', key === 'saloon');
-  document.body.classList.toggle('skin-regular', key !== 'saloon');
+  document.body.classList.toggle('skin-regular', key === 'regular' || key === 'atari');
+  document.body.classList.toggle('skin-cli', key === 'cli');
+  document.body.classList.toggle('skin-vpoker', key === 'vpoker');
+  document.body.classList.toggle('skin-flat', !!THEMES[key].flat);
   document.body.classList.toggle('skin-atari', key === 'atari');
   F_UI = key === 'atari' ? F_PIXEL : F_UI0;
   setSeg('#seg-skin', key); setSeg('#seg-skin2', key); setSeg('#seg-view', TH.view); setSeg('#seg-view2', TH.view);

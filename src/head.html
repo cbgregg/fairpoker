@@ -1,7 +1,7 @@
 <title>FairPoker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&family=DM+Serif+Display&family=IM+Fell+English+SC&family=Rye&family=JetBrains+Mono:wght@400;500;600&family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&family=DM+Serif+Display&family=IM+Fell+English+SC&family=Rye&family=JetBrains+Mono:wght@400;500;600&family=Press+Start+2P&family=VT323&display=swap">
 <style>
 /* Layout: one-screen app. Top bar → canvas scene (dealer torso + tilted table; seats, chips, cards and hands drawn every frame) → action dock. Log / Fairness / Settings in a drawer, docked on wide screens. Two committed dark skins: Regular (navy card room) and 1877 Saloon (walnut, brass, lamp light). */
 :root{
@@ -70,6 +70,27 @@ body.skin-atari{
   --f-head:'Press Start 2P',ui-monospace,monospace;
   --f-body:'Press Start 2P',ui-monospace,monospace;
 }
+body.skin-cli{
+  --bg:#000;--bg-2:#020603;--panel:#020a03;--panel-2:#04140a;--line:#1d5a2a;--line-2:#2f8a46;--ink:#7dff96;--muted:#3aa356;--accent:#7dff96;--accent-ink:#001a06;
+  --good:#7dff96;--bad:#ffc23a;
+  --b-fold:#000;--b-call:#000;--b-raise:#000;--b-all:#000;--b-next:#000;--btn-edge:#2f8a46;
+  --f-ui:VT323,'JetBrains Mono',ui-monospace,monospace;--f-head:VT323,ui-monospace,monospace;--f-body:VT323,ui-monospace,monospace;
+}
+body.skin-cli{font-size:18px}
+body.skin-cli .abtn{color:#7dff96;text-transform:uppercase;font-size:19px !important;line-height:1;letter-spacing:.06em;text-shadow:0 0 6px rgba(93,255,127,.6)}
+body.skin-cli .abtn:not(:disabled):active{background:#0b3a16}
+body.skin-cli .abtn.allin{color:#ffc23a;border-color:#ffc23a}
+body.skin-cli .strip,body.skin-cli .pre button{font-size:19px !important;text-shadow:0 0 5px rgba(93,255,127,.45)}
+body.skin-cli .hud .eq b,body.skin-cli .hud .h2 b{color:#d8ffe0}
+body.skin-cli .hud .ebar i{background:#7dff96}body.skin-cli .hud .ebar i.bad{background:#ffc23a}
+body.skin-vpoker{
+  --bg:#05124f;--bg-2:#071a6e;--panel:#030a33;--panel-2:#0b2aa8;--line:#3a5ad8;--line-2:#ffe24a;--ink:#fff;--muted:#a9b6ff;--accent:#ffe24a;--accent-ink:#1a1200;
+  --b-fold:linear-gradient(180deg,#f5f5f5,#b9b9b9);--b-call:linear-gradient(180deg,#ffe766,#e0a800);--b-raise:linear-gradient(180deg,#ffe766,#e0a800);--b-all:linear-gradient(180deg,#ff5a4a,#b8150c);--b-next:linear-gradient(180deg,#ffe766,#e0a800);--btn-edge:#000;
+}
+body.skin-vpoker .abtn{color:#140c00;font-weight:900;border:2px solid #000;box-shadow:inset 0 2px 0 rgba(255,255,255,.7),inset 0 -3px 0 rgba(0,0,0,.35)}
+body.skin-vpoker .abtn.allin{color:#fff}
+body.skin-vpoker .abtn small{color:inherit}
+body.skin-flat .field:has(#seg-view),body.skin-flat section:has(#seg-view2){display:none}
 body.skin-atari{font-size:10px;line-height:1.7}
 body.skin-atari #cv{image-rendering:pixelated;image-rendering:crisp-edges}
 body.skin-atari .drawer, body.skin-atari .drawer *{font-size:9px !important;letter-spacing:0 !important}
@@ -381,6 +402,36 @@ body.skin-saloon .abtn{font-family:var(--f-head);font-weight:400;letter-spacing:
                 <span class="tick"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
                 <b>16-Bit</b><small>First person, 16-bit console style</small>
               </button>
+              <button type="button" data-v="cli" aria-pressed="false">
+                <svg viewBox="0 0 160 90" aria-hidden="true">
+                  <rect width="160" height="90" fill="#020603"/>
+                  <g font-family="VT323,monospace" font-size="9" fill="#5dff7f">
+                    <text x="8" y="14">FAIRPOKER :: NLHE $1/$2</text>
+                    <text x="8" y="28" fill="#1f8a3c">BOARD</text><text x="38" y="28">[A&#9824;][K&#9827;]</text><text x="86" y="28" fill="#ff6d5a">[Q&#9829;]</text>
+                    <text x="8" y="42">&gt;D Silas   $198  RAISE</text>
+                    <text x="8" y="53" fill="#1f8a3c">  Hank    $200  FOLD</text>
+                    <text x="8" y="68" fill="#ffc23a">YOU [J&#9824;][T&#9824;] FLUSH DRAW</text>
+                    <text x="8" y="82" fill="#ffc23a">&gt; _</text>
+                  </g>
+                </svg>
+                <span class="tick"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+                <b>Terminal</b><small>Green-screen text table. Silent.</small>
+              </button>
+              <button type="button" data-v="vpoker" aria-pressed="false">
+                <svg viewBox="0 0 160 90" aria-hidden="true">
+                  <defs><linearGradient id="vpg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2aa8"/><stop offset="1" stop-color="#05124f"/></linearGradient></defs>
+                  <rect width="160" height="90" fill="url(#vpg)"/>
+                  <rect x="6" y="5" width="148" height="22" fill="#030a33" stroke="#ffe24a"/>
+                  <rect x="9" y="15" width="70" height="7" fill="#e8261c"/>
+                  <g font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-size="6.5" fill="#ffe24a"><text x="11" y="13">ROYAL FLUSH</text><text x="11" y="21" fill="#fff">FLUSH</text><text x="84" y="13">TWO PAIR</text><text x="84" y="21">ONE PAIR</text></g>
+                  <g fill="#fff"><rect x="18" y="36" width="22" height="31"/><rect x="45" y="36" width="22" height="31"/><rect x="72" y="36" width="22" height="31"/><rect x="99" y="36" width="22" height="31" opacity=".25"/><rect x="126" y="36" width="22" height="31" opacity=".25"/></g>
+                  <g font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="11"><text x="22" y="49" fill="#c8201c">A&#9829;</text><text x="49" y="49" fill="#111">K&#9824;</text><text x="76" y="49" fill="#c8201c">Q&#9830;</text></g>
+                  <rect x="18" y="74" width="40" height="11" fill="#000"/><rect x="62" y="74" width="40" height="11" fill="#000"/><rect x="106" y="74" width="40" height="11" fill="#000"/>
+                  <g font-family="JetBrains Mono,monospace" font-size="7" fill="#ff3a2a"><text x="24" y="82">$45</text><text x="68" y="82">$5</text><text x="110" y="82">$190</text></g>
+                </svg>
+                <span class="tick"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+                <b>Video Poker</b><small>Casino cabinet screen with machine sounds</small>
+              </button>
 
             </div>
           </div>
@@ -508,6 +559,8 @@ body.skin-saloon .abtn{font-family:var(--f-head);font-weight:400;letter-spacing:
             <button type="button" data-v="regular" aria-pressed="true">Regular</button>
             <button type="button" data-v="saloon" aria-pressed="false">1877 Saloon</button>
             <button type="button" data-v="atari" aria-pressed="false">16-Bit</button>
+            <button type="button" data-v="cli" aria-pressed="false">Terminal</button>
+            <button type="button" data-v="vpoker" aria-pressed="false">Video Poker</button>
           </div>
         </section>
         <section>

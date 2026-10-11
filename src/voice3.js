@@ -72,6 +72,7 @@ function modernSpeak(it){
   const k = it.k, text = it.text;
   const est = (380 + text.length*62)/u.rate;
   u.onend = u.onerror = () => {
+    if (sfx.ctx && sfx.ctx.state !== 'running') sfx.ctx.resume().catch(() => {});     // iOS pauses web audio while device speech talks
     const t = performance.now(), s = talking[k];
     if (s && s.text === text){ s.end = t; s.until = t + 700; }
     if (lastK === k) lastEnd = Math.min(lastEnd, t);
@@ -90,7 +91,7 @@ function modernSpeak(it){
 // iOS only lets a page speak after a tap: prime the engine on the first touch
 let mvPrimed = false;
 ['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, () => {
-  if (mvPrimed || !('speechSynthesis' in window)) return;
+  if (mvPrimed || !('speechSynthesis' in window) || VOICE_PACK !== 'modern') return;     // touching device speech on iOS can silence web audio
   mvPrimed = true;
   try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance('.'); u.volume = .01; u.rate = 2; speechSynthesis.speak(u); mvRefresh(); } catch(e){}
 }, { passive:true }));

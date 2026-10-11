@@ -2,7 +2,7 @@
 <title>FairPoker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&family=DM+Serif+Display&family=IM+Fell+English+SC&family=Rye&family=JetBrains+Mono:wght@400;500;600&family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&family=DM+Serif+Display&family=IM+Fell+English+SC&family=Rye&family=JetBrains+Mono:wght@400;500;600&family=Press+Start+2P&family=VT323&display=swap">
 <style>
 /* Layout: one-screen app. Top bar → canvas scene (dealer torso + tilted table; seats, chips, cards and hands drawn every frame) → action dock. Log / Fairness / Settings in a drawer, docked on wide screens. Two committed dark skins: Regular (navy card room) and 1877 Saloon (walnut, brass, lamp light). */
 :root{
@@ -71,6 +71,27 @@ body.skin-atari{
   --f-head:'Press Start 2P',ui-monospace,monospace;
   --f-body:'Press Start 2P',ui-monospace,monospace;
 }
+body.skin-cli{
+  --bg:#000;--bg-2:#020603;--panel:#020a03;--panel-2:#04140a;--line:#1d5a2a;--line-2:#2f8a46;--ink:#7dff96;--muted:#3aa356;--accent:#7dff96;--accent-ink:#001a06;
+  --good:#7dff96;--bad:#ffc23a;
+  --b-fold:#000;--b-call:#000;--b-raise:#000;--b-all:#000;--b-next:#000;--btn-edge:#2f8a46;
+  --f-ui:VT323,'JetBrains Mono',ui-monospace,monospace;--f-head:VT323,ui-monospace,monospace;--f-body:VT323,ui-monospace,monospace;
+}
+body.skin-cli{font-size:18px}
+body.skin-cli .abtn{color:#7dff96;text-transform:uppercase;font-size:19px !important;line-height:1;letter-spacing:.06em;text-shadow:0 0 6px rgba(93,255,127,.6)}
+body.skin-cli .abtn:not(:disabled):active{background:#0b3a16}
+body.skin-cli .abtn.allin{color:#ffc23a;border-color:#ffc23a}
+body.skin-cli .strip,body.skin-cli .pre button{font-size:19px !important;text-shadow:0 0 5px rgba(93,255,127,.45)}
+body.skin-cli .hud .eq b,body.skin-cli .hud .h2 b{color:#d8ffe0}
+body.skin-cli .hud .ebar i{background:#7dff96}body.skin-cli .hud .ebar i.bad{background:#ffc23a}
+body.skin-vpoker{
+  --bg:#05124f;--bg-2:#071a6e;--panel:#030a33;--panel-2:#0b2aa8;--line:#3a5ad8;--line-2:#ffe24a;--ink:#fff;--muted:#a9b6ff;--accent:#ffe24a;--accent-ink:#1a1200;
+  --b-fold:linear-gradient(180deg,#f5f5f5,#b9b9b9);--b-call:linear-gradient(180deg,#ffe766,#e0a800);--b-raise:linear-gradient(180deg,#ffe766,#e0a800);--b-all:linear-gradient(180deg,#ff5a4a,#b8150c);--b-next:linear-gradient(180deg,#ffe766,#e0a800);--btn-edge:#000;
+}
+body.skin-vpoker .abtn{color:#140c00;font-weight:900;border:2px solid #000;box-shadow:inset 0 2px 0 rgba(255,255,255,.7),inset 0 -3px 0 rgba(0,0,0,.35)}
+body.skin-vpoker .abtn.allin{color:#fff}
+body.skin-vpoker .abtn small{color:inherit}
+body.skin-flat .field:has(#seg-view),body.skin-flat section:has(#seg-view2){display:none}
 body.skin-atari{font-size:10px;line-height:1.7}
 body.skin-atari #cv{image-rendering:pixelated;image-rendering:crisp-edges}
 body.skin-atari .drawer, body.skin-atari .drawer *{font-size:9px !important;letter-spacing:0 !important}
@@ -382,6 +403,36 @@ body.skin-saloon .abtn{font-family:var(--f-head);font-weight:400;letter-spacing:
                 <span class="tick"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
                 <b>16-Bit</b><small>First person, 16-bit console style</small>
               </button>
+              <button type="button" data-v="cli" aria-pressed="false">
+                <svg viewBox="0 0 160 90" aria-hidden="true">
+                  <rect width="160" height="90" fill="#020603"/>
+                  <g font-family="VT323,monospace" font-size="9" fill="#5dff7f">
+                    <text x="8" y="14">FAIRPOKER :: NLHE $1/$2</text>
+                    <text x="8" y="28" fill="#1f8a3c">BOARD</text><text x="38" y="28">[A&#9824;][K&#9827;]</text><text x="86" y="28" fill="#ff6d5a">[Q&#9829;]</text>
+                    <text x="8" y="42">&gt;D Silas   $198  RAISE</text>
+                    <text x="8" y="53" fill="#1f8a3c">  Hank    $200  FOLD</text>
+                    <text x="8" y="68" fill="#ffc23a">YOU [J&#9824;][T&#9824;] FLUSH DRAW</text>
+                    <text x="8" y="82" fill="#ffc23a">&gt; _</text>
+                  </g>
+                </svg>
+                <span class="tick"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+                <b>Terminal</b><small>Green-screen text table. Silent.</small>
+              </button>
+              <button type="button" data-v="vpoker" aria-pressed="false">
+                <svg viewBox="0 0 160 90" aria-hidden="true">
+                  <defs><linearGradient id="vpg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2aa8"/><stop offset="1" stop-color="#05124f"/></linearGradient></defs>
+                  <rect width="160" height="90" fill="url(#vpg)"/>
+                  <rect x="6" y="5" width="148" height="22" fill="#030a33" stroke="#ffe24a"/>
+                  <rect x="9" y="15" width="70" height="7" fill="#e8261c"/>
+                  <g font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-size="6.5" fill="#ffe24a"><text x="11" y="13">ROYAL FLUSH</text><text x="11" y="21" fill="#fff">FLUSH</text><text x="84" y="13">TWO PAIR</text><text x="84" y="21">ONE PAIR</text></g>
+                  <g fill="#fff"><rect x="18" y="36" width="22" height="31"/><rect x="45" y="36" width="22" height="31"/><rect x="72" y="36" width="22" height="31"/><rect x="99" y="36" width="22" height="31" opacity=".25"/><rect x="126" y="36" width="22" height="31" opacity=".25"/></g>
+                  <g font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="11"><text x="22" y="49" fill="#c8201c">A&#9829;</text><text x="49" y="49" fill="#111">K&#9824;</text><text x="76" y="49" fill="#c8201c">Q&#9830;</text></g>
+                  <rect x="18" y="74" width="40" height="11" fill="#000"/><rect x="62" y="74" width="40" height="11" fill="#000"/><rect x="106" y="74" width="40" height="11" fill="#000"/>
+                  <g font-family="JetBrains Mono,monospace" font-size="7" fill="#ff3a2a"><text x="24" y="82">$45</text><text x="68" y="82">$5</text><text x="110" y="82">$190</text></g>
+                </svg>
+                <span class="tick"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+                <b>Video Poker</b><small>Casino cabinet screen with machine sounds</small>
+              </button>
 
             </div>
           </div>
@@ -509,6 +560,8 @@ body.skin-saloon .abtn{font-family:var(--f-head);font-weight:400;letter-spacing:
             <button type="button" data-v="regular" aria-pressed="true">Regular</button>
             <button type="button" data-v="saloon" aria-pressed="false">1877 Saloon</button>
             <button type="button" data-v="atari" aria-pressed="false">16-Bit</button>
+            <button type="button" data-v="cli" aria-pressed="false">Terminal</button>
+            <button type="button" data-v="vpoker" aria-pressed="false">Video Poker</button>
           </div>
         </section>
         <section>
@@ -937,7 +990,14 @@ const sfx = (() => {
       if (ac.state !== 'running') ac.resume().catch(() => {});
     } catch(e){ ac = null; }
   }
-  const ok = () => on && ac && ac.state === 'running';
+  // iOS can leave web audio 'interrupted' after a call, Siri or device speech: wake it on the next sound or touch
+  const ok = () => {
+    if (!on || !ac || (typeof TH !== 'undefined' && TH && TH.key === 'cli')) return false;
+    if (ac.state !== 'running'){ ac.resume().catch(() => {}); return false; }
+    return true;
+  };
+  ['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, () => { if (on && ac && ac.state !== 'running') ac.resume().catch(() => {}); }, { passive:true }));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && on && ac && ac.state !== 'running') ac.resume().catch(() => {}); });
   // filtered noise burst: plain high/low-pass shaping, no resonant peaks, no pitch sweeps
   function hiss(t, dur, { hp = 200, lp = 6000, vol = .3, attack = .002 } = {}){
     const src = ac.createBufferSource(); src.buffer = noiseBuf;
@@ -956,31 +1016,33 @@ const sfx = (() => {
   }
   const saloon = () => TH.key === 'saloon';
   const chip = () => TH.key === 'atari';
+  const vp = () => TH.key === 'vpoker';
+  const bell = (t, f, vol = .07) => { tone(t, f, .22, vol, 'sine'); tone(t, f*2.01, .14, vol*.4, 'sine'); };
   const blip = (t, f, dur, vol, f2) => tone(t, f, dur, vol, 'square', f2);
   return {
     init, get on(){ return on; }, set on(v){ on = v; store.set('sound', v ? '1' : '0'); if (v) init(); }, get live(){ return ok(); }, get ctx(){ return ac; }, get out(){ return master; },
     // a card skimming the felt: soft papery swish with a tiny landing tap
-    card(){ if (!ok()) return; const t = ac.currentTime; if (chip()){ blip(t, 880, .05, .05, 440); return; }
+    card(){ if (!ok()) return; const t = ac.currentTime; if (vp()){ tone(t, 1250, .05, .06, 'square'); tone(t + .05, 1650, .04, .04, 'square'); return; } if (chip()){ blip(t, 880, .05, .05, 440); return; }
       hiss(t, .07, { hp:900, lp:4200, vol:.16, attack:.012 }); hiss(t + .06, .03, { hp:120, lp:900, vol:.12 }); },
     // turning a card over: short air flick
-    flip(){ if (!ok()) return; const t = ac.currentTime; if (chip()){ blip(t, 660, .04, .05); blip(t + .04, 990, .05, .05); return; } hiss(t, .05, { hp:700, lp:3500, vol:.14, attack:.008 }); hiss(t + .045, .025, { hp:150, lp:1200, vol:.1 }); },
+    flip(){ if (!ok()) return; const t = ac.currentTime; if (vp()){ tone(t, 1900, .05, .05, 'square'); return; } if (chip()){ blip(t, 660, .04, .05); blip(t + .04, 990, .05, .05); return; } hiss(t, .05, { hp:700, lp:3500, vol:.14, attack:.008 }); hiss(t + .045, .025, { hp:150, lp:1200, vol:.1 }); },
     // clay chips: dull clacks with a little body, no ringing
-    chips(n = 3){ if (!ok()) return; const t = ac.currentTime, k = clamp(n, 1, 7); if (chip()){ for (let i = 0; i < k; i++) blip(t + i*.045, 1320 + (i % 2)*220, .03, .04); return; }
+    chips(n = 3){ if (!ok()) return; const t = ac.currentTime, k = clamp(n, 1, 7); if (vp()){ for (let i = 0; i < k; i++) bell(t + i*.06, 1568 + (i % 2)*523, .05); return; } if (chip()){ for (let i = 0; i < k; i++) blip(t + i*.045, 1320 + (i % 2)*220, .03, .04); return; }
       for (let i = 0; i < k; i++){
         const tt = t + i*(.035 + Math.random()*.03);
         hiss(tt, .028, { hp:1400, lp:5200, vol:.22 + Math.random()*.08 });
         hiss(tt, .05, { hp:350, lp:1600, vol:.12 });
       } },
     // knuckles on padded wood
-    knock(){ if (!ok()) return; const t = ac.currentTime; if (chip()){ blip(t, 120, .06, .08, 60); return; } tone(t, saloon() ? 120 : 140, .09, .38, 'sine', 80); hiss(t, .04, { hp:60, lp:700, vol:.25 }); },
+    knock(){ if (!ok()) return; const t = ac.currentTime; if (vp()){ tone(t, 600, .05, .07, 'square'); return; } if (chip()){ blip(t, 120, .06, .08, 60); return; } tone(t, saloon() ? 120 : 140, .09, .38, 'sine', 80); hiss(t, .04, { hp:60, lp:700, vol:.25 }); },
     turn(){ if (!ok()) return; const t = ac.currentTime; tone(t, 660, .35, .06, 'sine'); tone(t + .1, 990, .45, .05, 'sine'); },
-    win(big){ if (!ok()) return; const t = ac.currentTime; if (chip()){ [523, 659, 784, 1047, 784, 1047].forEach((f, i) => blip(t + i*.07, f, .09, big ? .07 : .05)); return; }
+    win(big){ if (!ok()) return; const t = ac.currentTime; if (vp()){ const n = big ? 22 : 12; for (let i = 0; i < n; i++) bell(t + i*.075, i % 2 ? 2093 : 1568, .06); return; } if (chip()){ [523, 659, 784, 1047, 784, 1047].forEach((f, i) => blip(t + i*.07, f, .09, big ? .07 : .05)); return; }
       const notes = saloon() ? [392, 494, 587, 784] : [523, 659, 784, 1047];
       notes.forEach((f, i) => { tone(t + i*.09, f, .6, big ? .12 : .08, 'triangle'); }); },
     // riffle shuffle: a fast run of soft paper ticks
-    riffle(){ if (!ok()) return; const t = ac.currentTime; if (chip()){ for (let i = 0; i < 12; i++) blip(t + i*.035, 400 + i*60, .02, .03); return; } for (let i = 0; i < 26; i++) hiss(t + i*.02 + Math.random()*.005, .018, { hp:1200, lp:5000, vol:.07 + Math.sin(i/26*Math.PI)*.06 }); },
+    riffle(){ if (!ok()) return; const t = ac.currentTime; if (vp()){ [523, 659, 784, 1047].forEach((f2, i) => tone(t + i*.07, f2, .09, .05, 'square')); return; } if (chip()){ for (let i = 0; i < 12; i++) blip(t + i*.035, 400 + i*60, .02, .03); return; } for (let i = 0; i < 26; i++) hiss(t + i*.02 + Math.random()*.005, .018, { hp:1200, lp:5000, vol:.07 + Math.sin(i/26*Math.PI)*.06 }); },
     // chips pushed across felt: low, breathy
-    slide(){ if (!ok()) return; const t = ac.currentTime; if (chip()){ blip(t, 300, .2, .04, 150); return; } hiss(t, .32, { hp:150, lp:900, vol:.1, attack:.06 }); },
+    slide(){ if (!ok()) return; const t = ac.currentTime; if (vp()){ for (let i = 0; i < 4; i++) bell(t + i*.05, 1760, .04); return; } if (chip()){ blip(t, 300, .2, .04, 150); return; } hiss(t, .32, { hp:150, lp:900, vol:.1, attack:.06 }); },
     lose(){ if (!ok()) return; const t = ac.currentTime; tone(t, 330, .3, .08, 'sine', 220); },
     boom(){ if (!ok()) return; const t = ac.currentTime; tone(t, 70, 1.1, .5, 'sine', 38); hiss(t, .5, { hp:30, lp:220, vol:.3, attack:.01 }); },
     drumroll(dur = .9){ if (!ok()) return; const t = ac.currentTime, n = Math.round(dur/.032);
@@ -1236,7 +1298,9 @@ function speak(it){
   const { k, text } = it, now = performance.now();
   if (window.__onSpeak) window.__onSpeak(it, k === 'D' ? 'DEALER' : G.players[k].name);
   let r = null;
-  if (VOICE_PACK === 'studio') r = studioSpeak(it);
+  cliPush('say', it.text, k === 'D' ? 'Dealer' : G.players[k].name);
+  if (TH.key === 'cli') r = { dur:500 + it.text.length*45, wave:null };      // the terminal is silent: talk scrolls by as text
+  if (!r && VOICE_PACK === 'studio') r = studioSpeak(it);
   if (!r && VOICE_PACK === 'neural') r = neuralSpeak(it);
   if (!r && (VOICE_PACK === 'modern' || VOICE_PACK === 'studio')) r = modernSpeak(it);
   if (!r) r = samSpeak(it);
@@ -5153,6 +5217,7 @@ function modernSpeak(it){
   const k = it.k, text = it.text;
   const est = (380 + text.length*62)/u.rate;
   u.onend = u.onerror = () => {
+    if (sfx.ctx && sfx.ctx.state !== 'running') sfx.ctx.resume().catch(() => {});     // iOS pauses web audio while device speech talks
     const t = performance.now(), s = talking[k];
     if (s && s.text === text){ s.end = t; s.until = t + 700; }
     if (lastK === k) lastEnd = Math.min(lastEnd, t);
@@ -5171,7 +5236,7 @@ function modernSpeak(it){
 // iOS only lets a page speak after a tap: prime the engine on the first touch
 let mvPrimed = false;
 ['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, () => {
-  if (mvPrimed || !('speechSynthesis' in window)) return;
+  if (mvPrimed || !('speechSynthesis' in window) || VOICE_PACK !== 'modern') return;     // touching device speech on iOS can silence web audio
   mvPrimed = true;
   try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance('.'); u.volume = .01; u.rate = 2; speechSynthesis.speak(u); mvRefresh(); } catch(e){}
 }, { passive:true }));
@@ -5465,6 +5530,202 @@ function extraChatter(){
   return true;
 }
 /* =====================================================================
+   FLAT THEMES — drawn as screens, not as a 3D room
+   cli    : a green-phosphor terminal. No audio; table talk scrolls by as text.
+   vpoker : a casino video poker cabinet. Paytable lights up your hand; machine dings.
+   ===================================================================== */
+const SUIT_CH = ['♠', '♥', '♦', '♣'];
+const cliCard = c => c == null ? '??' : (RANKS[c >> 2] === '10' ? 'T' : RANKS[c >> 2]) + SUIT_CH[c & 3];
+const isRed = c => c != null && ((c & 3) === 1 || (c & 3) === 2);
+// everything that happens, as lines of text: the game log and the table talk
+const CLI_LOG = [];
+function cliPush(kind, text, who){
+  CLI_LOG.push({ kind, text, who, t:performance.now() });
+  if (CLI_LOG.length > 120) CLI_LOG.shift();
+}
+const HAND_ROWS = ['ROYAL FLUSH', 'STRAIGHT FLUSH', 'FOUR OF A KIND', 'FULL HOUSE', 'FLUSH', 'STRAIGHT', 'THREE OF A KIND', 'TWO PAIR', 'ONE PAIR', 'HIGH CARD'];
+function heroHandRow(){
+  const h = H, p = me();
+  if (!h || !p.hole.length || !(h.heroFlip >= 1) || p.folded) return -1;
+  if (!h.board.length) return p.hole[0] >> 2 === p.hole[1] >> 2 ? 8 : 9;
+  const e = evaluate([...p.hole, ...h.board]);
+  return e.cat === 8 && e.vals[0] === 12 ? 0 : 9 - e.cat;
+}
+function tableFacts(){
+  const h = H, p = me();
+  const seats = G.players.map((q, i) => {
+    const active = !!(h && !h.done && h.toAct === i && needsAction(q));
+    const b = seatBadge(q, i, active);
+    return { i, name:i ? q.name : 'YOU', stack:q.chips - (q.carry || 0), bet:q.bet || 0, status:b ? b[0] : '', kind:b ? b[1] : '', active,
+      folded:!!(h && q.folded && !h.done), out:q.chips <= 0 && !(h && q.inHand && !h.done), button:G.button === i };
+  });
+  const pot = h ? potAll() : 0, toCall = h && !h.done ? Math.max(0, Math.min(h.currentBet - p.bet, p.chips)) : 0;
+  const street = !h ? '' : h.done ? 'HAND OVER' : ['PRE-FLOP', 'FLOP', 'TURN', 'RIVER'][h.street] || '';
+  return { seats, pot, toCall, street, board:h && !h.boardGone ? h.board : [], flips:h ? h.boardFlip : [], hole:p.hole, up:!!(h && h.heroFlip >= 1), eq:eqCache.val };
+}
+
+/* ---------- terminal ---------- */
+const CLI = { fg:'#5dff7f', dim:'#1f8a3c', hi:'#d8ffe0', amber:'#ffc23a', red:'#ff6d5a', bg:'#020603' };
+function drawCli(g, t){
+  const F = tableFacts(), narrow = CW < 560;
+  const cols = narrow ? 44 : 78;
+  g.fillStyle = CLI.bg; g.fillRect(0, 0, CW, CH);
+  let fs = 20; g.font = `${fs}px VT323, "JetBrains Mono", ui-monospace, monospace`;
+  const cw0 = g.measureText('M').width/fs;
+  fs = Math.floor(Math.min((CW - 16)/(cols*cw0), 26)); g.font = `${fs}px VT323, "JetBrains Mono", ui-monospace, monospace`;
+  const cw = g.measureText('M').width, lh = Math.round(fs*1.12), x0 = Math.round((CW - cols*cw)/2), y0 = 10;
+  const rows = Math.floor((CH - y0*2)/lh);
+  g.textBaseline = 'top'; g.textAlign = 'left';
+  g.shadowColor = 'rgba(93,255,127,.55)'; g.shadowBlur = 6;
+  const put = (c, r, s, col = CLI.fg) => { g.fillStyle = col; g.fillText(s, x0 + c*cw, y0 + r*lh); };
+  const rule = r => put(0, r, '-'.repeat(cols), CLI.dim);
+  const pad = (s, n) => (s + ' '.repeat(n)).slice(0, n), lpad = (s, n) => (' '.repeat(n) + s).slice(-n);
+  let r = 0;
+  put(0, r, pad(`FAIRPOKER :: NLHE ${money(G.cfg.sb)}/${money(G.cfg.bb)}`, cols - 9), CLI.hi); put(cols - 9, r, lpad(`HAND ${H ? H.nonce : 0}`, 9), CLI.dim); r++;
+  rule(r++);
+  // board
+  put(0, r, 'BOARD', CLI.dim);
+  for (let k = 0; k < 5; k++){
+    const c = F.board[k], shown = c != null && (F.flips[k] ?? 1) >= .5;
+    const s = shown ? cliCard(c) : c != null ? '##' : '..';
+    put(7 + k*5, r, '[', CLI.dim); put(8 + k*5, r, s, shown && isRed(c) ? CLI.red : shown ? CLI.hi : CLI.dim); put(10 + k*5, r, ']', CLI.dim);
+  }
+  if (narrow){ r++; put(0, r, F.street, CLI.amber); put(cols - 12, r, lpad('POT ' + money(F.pot), 12), CLI.amber); }
+  else { put(34, r, F.street, CLI.amber); put(cols - 14, r, lpad('POT ' + money(F.pot), 14), CLI.amber); }
+  r++;
+  rule(r++);
+  // seats
+  put(0, r, narrow ? '  NAME      STACK   BET  ACTION' : '  SEAT  NAME        STACK     BET    ACTION', CLI.dim); r++;
+  for (const s of F.seats){
+    if (!s.i) continue;
+    const col = s.out || s.folded ? CLI.dim : s.active ? CLI.amber : CLI.fg;
+    const act = s.active ? (H && H.think ? 'THINKING' + '.'.repeat(1 + Math.floor(t/400) % 3) : 'TO ACT') : s.status.toUpperCase();
+    const line = narrow
+      ? `${s.active ? '>' : ' '}${s.button ? 'D' : ' '} ${pad(s.name, 7)}${lpad(money(s.stack), 7)}${lpad(s.bet ? money(s.bet) : '-', 6)}  ${act}`
+      : `${s.active ? '>' : ' '}${s.button ? 'D' : ' '} ${lpad(String(s.i), 3)}   ${pad(s.name, 10)}${lpad(money(s.stack), 7)}${lpad(s.bet ? money(s.bet) : '-', 8)}    ${act}`;
+    put(0, r++, pad(line, cols), col);
+  }
+  rule(r++);
+  // you
+  const you = F.seats[0], hand = heroHandRow() >= 0 ? HAND_ROWS[heroHandRow()] : '';
+  put(0, r, `${you.active ? '>' : ' '}${you.button ? 'D' : ' '}YOU`, you.active ? CLI.amber : CLI.hi);
+  F.hole.forEach((c, k) => { const s = F.up ? cliCard(c) : '##'; put(7 + k*5, r, '[', CLI.dim); put(8 + k*5, r, s, F.up && isRed(c) ? CLI.red : CLI.hi); put(10 + k*5, r, ']', CLI.dim); });
+  put(18, r, pad(hand, cols - 30), CLI.amber); put(cols - 12, r, lpad(money(you.stack), 12), CLI.hi); r++;
+  const eqs = F.eq != null && you && !you.folded ? `WIN ${Math.round(F.eq*100)}%` : '';
+  const callS = F.toCall > 0 ? `TO CALL ${money(F.toCall)}` : (humanResolve ? 'CHECK IS FREE' : '');
+  put(2, r, pad(callS, 24), CLI.fg); put(cols - 12, r, lpad(eqs, 12), CLI.fg); r++;
+  rule(r++);
+  // scrolling log: game events and table talk, newest at the bottom
+  const room = rows - r - 1;
+  const lines = [];
+  for (let i = CLI_LOG.length - 1; i >= 0 && lines.length < room; i--){
+    const e = CLI_LOG[i];
+    const pre = e.kind === 'say' ? `${(e.who || '').toUpperCase()}: ` : '* ';
+    const full = pre + e.text;
+    const chunks = []; for (let s = 0; s < full.length; s += cols - 2) chunks.push(full.slice(s, s + cols - 2));
+    for (let j = chunks.length - 1; j >= 0 && lines.length < room; j--) lines.unshift({ s:(j ? '  ' : '') + chunks[j], e, first:j === 0, len:full.length, off:j*(cols - 2) });
+  }
+  lines.forEach((L2, j) => {
+    const e = L2.e, age = t - e.t, shown = Math.floor(age/14);                     // typewriter
+    const vis = Math.max(0, Math.min(L2.s.length, shown - L2.off));
+    put(0, r + j, L2.s.slice(0, vis), e.kind === 'say' ? CLI.hi : CLI.fg);
+  });
+  // prompt with a blinking cursor
+  const pr = humanResolve ? '> YOUR MOVE: FOLD / ' + (F.toCall > 0 ? 'CALL' : 'CHECK') + ' / RAISE' : '> ';
+  put(0, rows - 1, pr.slice(0, cols - 1), CLI.amber);
+  if (Math.floor(t/500) % 2) { g.fillStyle = CLI.amber; g.fillRect(x0 + Math.min(pr.length, cols - 1)*cw, y0 + (rows - 1)*lh + 2, cw*.8, lh - 4); }
+  g.shadowBlur = 0;
+  // scanlines and a soft vignette
+  g.fillStyle = 'rgba(0,0,0,.28)'; for (let y = 0; y < CH; y += 3) g.fillRect(0, y, CW, 1);
+  const vg = g.createRadialGradient(CW/2, CH/2, Math.min(CW, CH)*.3, CW/2, CH/2, Math.max(CW, CH)*.75);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.55)'); g.fillStyle = vg; g.fillRect(0, 0, CW, CH);
+}
+
+/* ---------- video poker cabinet ---------- */
+const VP = { bg0:'#0b2aa8', bg1:'#05124f', yellow:'#ffe24a', red:'#e8261c', white:'#ffffff', cyan:'#6ef0ff', dark:'#030a33' };
+const VP_FONT = (s, w = '900') => `${w} ${s}px "Barlow Condensed","Arial Narrow",Impact,sans-serif`;
+function vpText(g, s, x, y, size, col, align = 'center', stroke = true){
+  g.font = VP_FONT(size); g.textAlign = align; g.textBaseline = 'middle';
+  if (stroke){ g.lineWidth = Math.max(2, size*.16); g.strokeStyle = '#000'; g.lineJoin = 'round'; g.strokeText(s, x, y); }
+  g.fillStyle = col; g.fillText(s, x, y);
+}
+function drawVPoker(g, t){
+  const F = tableFacts(), narrow = CW < 560;
+  const bg = g.createLinearGradient(0, 0, 0, CH); bg.addColorStop(0, VP.bg0); bg.addColorStop(1, VP.bg1);
+  g.fillStyle = bg; g.fillRect(0, 0, CW, CH);
+  const m = narrow ? 8 : 16, W = CW - m*2;
+  let y = m;
+  // paytable: your current hand lights up
+  const row = heroHandRow(), ptH = narrow ? 15 : 18, cols2 = 2, perCol = 5, colW = W/cols2;
+  g.fillStyle = VP.dark; g.fillRect(m, y, W, ptH*perCol + 10);
+  g.strokeStyle = VP.yellow; g.lineWidth = 2; g.strokeRect(m + 1, y + 1, W - 2, ptH*perCol + 8);
+  HAND_ROWS.forEach((name, i) => {
+    const c = Math.floor(i/perCol), rr = i % perCol, x = m + c*colW, yy = y + 5 + rr*ptH;
+    const lit = i === row;
+    if (lit){ g.fillStyle = (Math.floor(t/350) % 2) ? VP.red : '#b51410'; g.fillRect(x + 4, yy, colW - 8, ptH); }
+    vpText(g, name, x + 10, yy + ptH/2 + 1, ptH*.86, lit ? VP.white : VP.yellow, 'left', false);
+  });
+  y += ptH*perCol + 10 + (narrow ? 8 : 12);
+  // opponents: one credit meter each
+  const opp = F.seats.filter(s => s.i), per = narrow ? 4 : Math.min(7, opp.length), bw = W/per, bh = narrow ? 46 : 52;
+  opp.forEach((s, j) => {
+    const cx0 = m + (j % per)*bw, cy0 = y + Math.floor(j/per)*(bh + 6);
+    g.fillStyle = s.active ? '#16349a' : VP.dark; g.fillRect(cx0 + 2, cy0, bw - 4, bh);
+    g.strokeStyle = s.active && Math.floor(t/300) % 2 ? VP.yellow : s.folded || s.out ? '#22306a' : '#3a5ad8'; g.lineWidth = 2; g.strokeRect(cx0 + 3, cy0 + 1, bw - 6, bh - 2);
+    vpText(g, (s.button ? '◉ ' : '') + s.name.toUpperCase(), cx0 + bw/2, cy0 + bh*.24, narrow ? 12 : 14, s.folded || s.out ? '#7c86b8' : VP.white, 'center', false);
+    vpText(g, money(s.stack), cx0 + bw/2, cy0 + bh*.52, narrow ? 15 : 18, s.folded || s.out ? '#8a7a30' : VP.yellow, 'center', false);
+    const st = s.active ? 'THINKING' : s.status.toUpperCase();
+    vpText(g, st, cx0 + bw/2, cy0 + bh*.8, narrow ? 10 : 12, s.kind === 'fold' ? '#ff8a80' : VP.cyan, 'center', false);
+  });
+  y += Math.ceil(opp.length/per)*(bh + 6) + (narrow ? 6 : 10);
+  // street banner + pot
+  vpText(g, F.street || 'INSERT COIN', CW/2, y + 14, narrow ? 22 : 28, VP.yellow);
+  y += narrow ? 32 : 40;
+  // board: five big cards
+  const mh0 = narrow ? 44 : 52, room = CH - y - (narrow ? 32 : 40) - 30 - mh0 - 14 - 34;      // leave space for meters, your cards and the marquee
+  const gap = narrow ? 5 : 10, cwid = Math.max(30, Math.min((W - gap*4)/5, 110, room/(1.42*2.2))), chh = cwid*1.42, bx = CW/2 - (cwid*5 + gap*4)/2;
+  const labels = ['FLOP', 'FLOP', 'FLOP', 'TURN', 'RIVER'];
+  for (let k = 0; k < 5; k++){
+    const x = bx + k*(cwid + gap), c = F.board[k], f = F.flips[k] ?? 1;
+    vpText(g, labels[k], x + cwid/2, y + 8, narrow ? 12 : 15, c != null ? VP.yellow : '#4f63b8', 'center', false);
+    const img = cardCanvas(c != null && f >= .5 ? c : null, cwid, 'modern');
+    if (c == null){ g.globalAlpha = .25; }
+    g.drawImage(img, x, y + 18, cwid, chh);
+    g.globalAlpha = 1;
+    if (c != null && H && H.highlight.has(c)){ g.strokeStyle = VP.yellow; g.lineWidth = 3; g.strokeRect(x - 2, y + 16, cwid + 4, chh + 4); }
+  }
+  y += chh + 30;
+  // meters: pot, to call, credits
+  const mw = W/3, mh = narrow ? 44 : 52;
+  [['POT', money(F.pot)], ['TO CALL', F.toCall > 0 ? money(F.toCall) : '—'], ['CREDITS', money(F.seats[0].stack)]].forEach(([k, v], i) => {
+    const x = m + i*mw;
+    vpText(g, k, x + mw/2, y + 8, narrow ? 12 : 14, VP.yellow, 'center', false);
+    g.fillStyle = '#000'; g.fillRect(x + 6, y + 18, mw - 12, mh - 18);
+    g.shadowColor = VP.red; g.shadowBlur = 8;
+    g.font = `700 ${narrow ? 20 : 24}px "JetBrains Mono", ui-monospace, monospace`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#ff3a2a';
+    g.fillText(v, x + mw/2, y + 18 + (mh - 18)/2 + 1);
+    g.shadowBlur = 0;
+  });
+  y += mh + (narrow ? 10 : 14);
+  // your two cards
+  const hw = Math.min(cwid*1.2, (CH - y - 34)/1.42, 130), hh = hw*1.42, hx = CW/2 - (hw*2 + gap)/2;
+  if (hh > 40){
+    F.hole.forEach((c, k) => {
+      const img = cardCanvas(F.up ? c : null, hw, 'modern');
+      g.drawImage(img, hx + k*(hw + gap), y, hw, hh);
+      if (H && H.highlight.has(c)){ g.strokeStyle = VP.yellow; g.lineWidth = 3; g.strokeRect(hx + k*(hw + gap) - 2, y - 2, hw + 4, hh + 4); }
+    });
+    if (F.eq != null && F.up) vpText(g, `WIN ${Math.round(F.eq*100)}%`, hx + hw*2 + gap + 12, y + hh/2, narrow ? 16 : 20, VP.cyan, 'left');
+    y += hh + 8;
+  }
+  // last thing said, as a marquee line
+  const last = [...CLI_LOG].reverse().find(e => e.kind === 'say' && t - e.t < 6000);
+  if (last && y < CH - 10) vpText(g, `${(last.who || '').toUpperCase()}: ${last.text}`.slice(0, narrow ? 46 : 90), CW/2, Math.min(y + 10, CH - 12), narrow ? 14 : 17, VP.white, 'center');
+}
+function drawFlatTheme(g, t){
+  if (TH.key === 'cli') drawCli(g, t); else drawVPoker(g, t);
+}
+/* =====================================================================
    RENDERER — canvas, one frame per requestAnimationFrame
    ===================================================================== */
 const CAMERA = { W:100, H:132, tilt:36, pf:1.8, squash:.5, rail:7, cardsIn:11, stackIn:11, betIn:18, boardY:.38, potY:.535, pillY:.625, msgY:.565, cardW:10.8, wScale:1.14, bottomPad:12 };
@@ -5473,11 +5734,14 @@ const THEMES = {
   regular:{ ...CAMERA, key:'regular', cardStyle:'modern' },
   saloon: { ...CAMERA, key:'saloon',  cardStyle:'vintage' },
   // first person: camera low at your seat, strong perspective; rendered at low resolution in an Atari 8-bit palette
-  atari:  { ...CAMERA, key:'atari', cardStyle:'pixel' }
+  atari:  { ...CAMERA, key:'atari', cardStyle:'pixel' },
+  // flat screens: a text terminal and a video poker cabinet
+  cli:    { ...CAMERA, key:'cli', cardStyle:'modern', flat:true },
+  vpoker: { ...CAMERA, key:'vpoker', cardStyle:'modern', flat:true }
 };
 const FPPORT = { w:1.04, tilt:63, pf:.78, cardW:12 };          // phone held upright: step back and look down a bit so every seat fits
 const FPCAM = { view:'first', cardW:8.4, tilt:71, pf:.78, wScale:.62, bottomPad:0, nearCut:20 };
-const themeFor = (key, view) => ({ ...THEMES[key], ...(key === 'atari' && !PIXEL_DECK ? { cardStyle:'modern' } : {}), ...(view === 'first' ? FPCAM : { view:'above' }) });
+const themeFor = (key, view) => ({ ...THEMES[key], ...(key === 'atari' && !PIXEL_DECK ? { cardStyle:'modern' } : {}), ...(view === 'first' && !THEMES[key].flat ? FPCAM : { view:'above' }) });
 const FP = () => TH.view === 'first';
 let TH = themeFor('regular', 'above');
 const cv = $('#cv'), cx = cv.getContext('2d');
@@ -8020,12 +8284,13 @@ function drawFrame(t){
   }
   if (!G || $('#game').hidden || !CW) return;
   if (showFps){ fpsN++; if (t - fpsT > 500){ fpsVal = Math.round(fpsN*1000/(t - fpsT)); fpsN = 0; fpsT = t; } }
-  if (staticDirty) buildStatic();
+  if (staticDirty && !TH.flat) buildStatic();
   const g = cx;
   let sx = 0, sy = 0;
   if (H && H.shake && !RM){ const e = (t - H.shake)/480; if (e < 1){ const a = 7*(1 - e)*(1 - e); sx = (Math.random()*2 - 1)*a; sy = (Math.random()*2 - 1)*a; } }
   g.setTransform(DPR, 0, 0, DPR, sx*DPR, sy*DPR);
-  if (TH.key === 'atari') drawAtariFrame(t, sx, sy);
+  if (TH.flat) drawFlatTheme(g, t);
+  else if (TH.key === 'atari') drawAtariFrame(t, sx, sy);
   else {
     if (sx || sy){ g.fillStyle = '#000'; g.fillRect(-10, -10, CW + 20, CH + 20); }
     g.drawImage(staticCv, 0, 0, CW, CH);
@@ -8573,7 +8838,10 @@ function applySkin(key){
   cfg.skin = key;
   TH = themeFor(key, viewFor(key));
   document.body.classList.toggle('skin-saloon', key === 'saloon');
-  document.body.classList.toggle('skin-regular', key !== 'saloon');
+  document.body.classList.toggle('skin-regular', key === 'regular' || key === 'atari');
+  document.body.classList.toggle('skin-cli', key === 'cli');
+  document.body.classList.toggle('skin-vpoker', key === 'vpoker');
+  document.body.classList.toggle('skin-flat', !!THEMES[key].flat);
   document.body.classList.toggle('skin-atari', key === 'atari');
   F_UI = key === 'atari' ? F_PIXEL : F_UI0;
   setSeg('#seg-skin', key); setSeg('#seg-skin2', key); setSeg('#seg-view', TH.view); setSeg('#seg-view2', TH.view);
@@ -9087,7 +9355,7 @@ function renderTop(){
     return;
   }
   Ld.innerHTML = `<button class="pill ${leaveArmed ? 'armed' : ''}" id="leaveBtn" type="button" aria-label="${leaveArmed ? 'Tap again to leave the table' : 'Back to lobby'}">${IC.back}<span>${leaveArmed ? 'Tap to leave' : 'Lobby'}</span></button>`;
-  C.innerHTML = `<div class="info-1">${TH.key === 'saloon' ? '1877 Saloon' : TH.key === 'atari' ? '16-Bit' : "Texas Hold'em"} · No limit${H ? ` · Hand ${H.nonce}` : ''}</div><div class="info-2">Blinds ${money(G.cfg.sb)}/${money(G.cfg.bb)}</div>`;
+  C.innerHTML = `<div class="info-1">${TH.key === 'saloon' ? '1877 Saloon' : TH.key === 'atari' ? '16-Bit' : TH.key === 'cli' ? 'Terminal' : TH.key === 'vpoker' ? 'Video Poker' : "Texas Hold'em"} · No limit${H ? ` · Hand ${H.nonce}` : ''}</div><div class="info-2">Blinds ${money(G.cfg.sb)}/${money(G.cfg.bb)}</div>`;
   if (!Rr.firstChild){
     Rr.innerHTML = `<button class="ico" id="sndBtn" type="button"></button>
       <button class="ico" data-open="log" aria-label="Hand log" title="Hand log" type="button">${IC.log}</button>
@@ -9288,6 +9556,7 @@ function renderDock(){
 }
 
 function logLine(text, cls = 'l'){
+  if (typeof cliPush === 'function') cliPush('log', text);
   const el = document.createElement('div');
   el.className = cls; el.textContent = text;
   const log = $('#log');

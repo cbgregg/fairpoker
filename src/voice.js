@@ -241,7 +241,9 @@ function speak(it){
   const { k, text } = it, now = performance.now();
   if (window.__onSpeak) window.__onSpeak(it, k === 'D' ? 'DEALER' : G.players[k].name);
   let r = null;
-  if (VOICE_PACK === 'studio') r = studioSpeak(it);
+  cliPush('say', it.text, k === 'D' ? 'Dealer' : G.players[k].name);
+  if (TH.key === 'cli') r = { dur:500 + it.text.length*45, wave:null };      // the terminal is silent: talk scrolls by as text
+  if (!r && VOICE_PACK === 'studio') r = studioSpeak(it);
   if (!r && VOICE_PACK === 'neural') r = neuralSpeak(it);
   if (!r && (VOICE_PACK === 'modern' || VOICE_PACK === 'studio')) r = modernSpeak(it);
   if (!r) r = samSpeak(it);

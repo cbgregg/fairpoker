@@ -78,12 +78,13 @@ function drawFrame(t){
   }
   if (!G || $('#game').hidden || !CW) return;
   if (showFps){ fpsN++; if (t - fpsT > 500){ fpsVal = Math.round(fpsN*1000/(t - fpsT)); fpsN = 0; fpsT = t; } }
-  if (staticDirty) buildStatic();
+  if (staticDirty && !TH.flat) buildStatic();
   const g = cx;
   let sx = 0, sy = 0;
   if (H && H.shake && !RM){ const e = (t - H.shake)/480; if (e < 1){ const a = 7*(1 - e)*(1 - e); sx = (Math.random()*2 - 1)*a; sy = (Math.random()*2 - 1)*a; } }
   g.setTransform(DPR, 0, 0, DPR, sx*DPR, sy*DPR);
-  if (TH.key === 'atari') drawAtariFrame(t, sx, sy);
+  if (TH.flat) drawFlatTheme(g, t);
+  else if (TH.key === 'atari') drawAtariFrame(t, sx, sy);
   else {
     if (sx || sy){ g.fillStyle = '#000'; g.fillRect(-10, -10, CW + 20, CH + 20); }
     g.drawImage(staticCv, 0, 0, CW, CH);

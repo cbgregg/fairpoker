@@ -204,7 +204,7 @@ function renderTop(){
     return;
   }
   Ld.innerHTML = `<button class="pill ${leaveArmed ? 'armed' : ''}" id="leaveBtn" type="button" aria-label="${leaveArmed ? 'Tap again to leave the table' : 'Back to lobby'}">${IC.back}<span>${leaveArmed ? 'Tap to leave' : 'Lobby'}</span></button>`;
-  C.innerHTML = `<div class="info-1">${TH.key === 'saloon' ? '1877 Saloon' : TH.key === 'atari' ? '16-Bit' : "Texas Hold'em"} · No limit${H ? ` · Hand ${H.nonce}` : ''}</div><div class="info-2">Blinds ${money(G.cfg.sb)}/${money(G.cfg.bb)}</div>`;
+  C.innerHTML = `<div class="info-1">${TH.key === 'saloon' ? '1877 Saloon' : TH.key === 'atari' ? '16-Bit' : TH.key === 'cli' ? 'Terminal' : TH.key === 'vpoker' ? 'Video Poker' : "Texas Hold'em"} · No limit${H ? ` · Hand ${H.nonce}` : ''}</div><div class="info-2">Blinds ${money(G.cfg.sb)}/${money(G.cfg.bb)}</div>`;
   if (!Rr.firstChild){
     Rr.innerHTML = `<button class="ico" id="sndBtn" type="button"></button>
       <button class="ico" data-open="log" aria-label="Hand log" title="Hand log" type="button">${IC.log}</button>

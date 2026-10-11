@@ -1,4 +1,5 @@
 function logLine(text, cls = 'l'){
+  if (typeof cliPush === 'function') cliPush('log', text);
   const el = document.createElement('div');
   el.className = cls; el.textContent = text;
   const log = $('#log');
