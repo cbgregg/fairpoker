@@ -38,12 +38,12 @@ const FEMALE_VOICE = /samantha|ava|allison|susan|victoria|karen|moira|tessa|zira
 const MALE_VOICE = /alex|daniel|fred|tom\b|aaron|arthur|gordon|rishi|guy|davis|tony|jason|christopher|eric|roger|ryan|thomas|andrew|brian|steffan|oliver|evan|nathan|reed|rocko|ralph|albert|bruce|junior|william|liam|brandon|jacob|male|siri.*(voice 3|voice 4)/i;
 
 /* ---------- Modern: device voices ---------- */
-let MV_LIST = [], MV_PICK = {}; const MV_KEEP = [];
+let MV_LIST = [], MV_PICK = {}; const MV_KEEP = [], MV_BAD = new Set(); let MV_FAILS = 0, MV_OK = 0, MV_BROKEN = false;
 function mvRefresh(){
   if (!('speechSynthesis' in window)) return;
   const score = v => (/natural|neural|premium|enhanced|online/i.test(v.name) ? 6 : 0) + (/en[-_]US/i.test(v.lang) ? 2 : /en[-_](GB|AU|IE|CA)/i.test(v.lang) ? 1 : 0) + (v.localService === false ? 1 : 0)
     - (/novelty|bad news|bells|boing|bubbles|cellos|whisper|zarvox|trinoids|organ|hysterical|jester|superstar|wobble|grandma|grandpa|eddy|flo|reed|rocko|sandy|shelley|albert|bahh/i.test(v.name) ? 20 : 0);
-  MV_LIST = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang)).sort((a, b) => score(b) - score(a));
+  MV_LIST = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang) && score(v) > -10).sort((a, b) => score(b) - score(a));      // novelty voices (Zarvox, Bells…) never sit at the table
   MV_PICK = {};
 }
 if ('speechSynthesis' in window){ mvRefresh(); speechSynthesis.onvoiceschanged = mvRefresh; }
@@ -55,20 +55,32 @@ function mvFor(k){
   const fem = who !== 'D' && FEMALE_NAMES.has(who);
   const taken = new Set(Object.values(MV_PICK).filter(Boolean).map(v => v.voiceURI));
   const fits = v => fem ? FEMALE_VOICE.test(v.name) || !MALE_VOICE.test(v.name) : MALE_VOICE.test(v.name) || !FEMALE_VOICE.test(v.name);
-  const v = MV_LIST.find(v => fits(v) && !taken.has(v.voiceURI)) || MV_LIST.find(fits) || MV_LIST[0] || null;
+  const usable = MV_LIST.filter(v => !MV_BAD.has(v.voiceURI));
+  const v = usable.find(v => fits(v) && !taken.has(v.voiceURI)) || usable.find(fits) || usable[0] || null;
   // two players on the same voice still sound different: a per-player pitch offset
   const seed = [...who].reduce((a, c) => a + c.charCodeAt(0), 0);
-  if (!v) return null;                      // voices not loaded yet: ask again next line
+  if (!v) return 'lang';                    // no usable named voice: let the device pick by language
   MV_PICK[who] = v ? { voice:v, voiceURI:v.voiceURI, pitch:who === 'D' ? .92 : .9 + (seed % 7)*.035, rate:1 + ((seed >> 2) % 5 - 2)*.03 } : null;
   return MV_PICK[who];
 }
 function modernSpeak(it){
-  if (!('speechSynthesis' in window) || !sfx.on) return null;
-  const pick_ = mvFor(it.k); if (!pick_) return null;
+  if (!('speechSynthesis' in window) || !sfx.on || MV_BROKEN) return null;
+  let pick_ = mvFor(it.k); if (!pick_) return null;
+  if (pick_ === 'lang') pick_ = { voice:null, pitch:.9, rate:1 };
   const [r, p, v] = EMO_PROS[it.emo] || EMO_PROS.neutral, quick = paceF() < .8 ? 1.18 : 1;
   const u = new SpeechSynthesisUtterance(it.text);
-  u.voice = pick_.voice; u.lang = pick_.voice.lang;
+  if (pick_.voice){ u.voice = pick_.voice; u.lang = pick_.voice.lang; } else u.lang = 'en-US';
   u.rate = clamp(r*pick_.rate*quick, .5, 2); u.pitch = clamp(p*pick_.pitch, .1, 2); u.volume = clamp(v*.95, 0, 1);
+  // some voices a browser lists can't actually speak: if nothing starts, drop that voice, and give up on device speech after repeated silence
+  let started = false;
+  const who = it.k === 'D' ? 'D' : (G.players[it.k] ? G.players[it.k].name : '?');
+  setTimeout(() => {
+    if (started) return;
+    MV_FAILS++;
+    if (pick_.voice){ MV_BAD.add(pick_.voice.voiceURI); delete MV_PICK[who]; }
+    if (MV_FAILS >= 4 && !MV_OK){ MV_BROKEN = true; mvStatus('Device voices did not respond in this browser. Using Retro voices instead. Try Neural.'); }
+    if (lastK === it.k) lastEnd = Math.min(lastEnd, performance.now());
+  }, 2200);
   const k = it.k, text = it.text;
   const est = (380 + text.length*62)/u.rate;
   u.onend = u.onerror = () => {
@@ -78,6 +90,7 @@ function modernSpeak(it){
     if (lastK === k) lastEnd = Math.min(lastEnd, t);
   };
   u.onstart = () => {           // the clock starts when the voice actually starts
+    started = true; MV_OK++;
     const t = performance.now(), s = talking[k];
     if (s && s.text === text){ s.t0 = t; s.end = t + est*1.6; s.until = s.end + 900; }
     if (lastK === k) lastEnd = Math.max(lastEnd, t + est);
@@ -85,16 +98,33 @@ function modernSpeak(it){
   MV_KEEP.push(u); if (MV_KEEP.length > 8) MV_KEEP.shift();      // iOS drops events of utterances it garbage-collects
   if (speechSynthesis.paused) speechSynthesis.resume();
   speechSynthesis.speak(u);
-  curSrc = { stop(){ try { speechSynthesis.cancel(); } catch(e){} } };
+  curSrc = { stop(){ try { speechSynthesis.cancel(); } catch(e){} } }; curPrio = it.prio;
   return { dur:est, wave:null };
 }
 // iOS only lets a page speak after a tap: prime the engine on the first touch
 let mvPrimed = false;
-['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, () => {
-  if (mvPrimed || !('speechSynthesis' in window) || VOICE_PACK !== 'modern') return;     // touching device speech on iOS can silence web audio
+function mvPrime(force){
+  if ((mvPrimed && !force) || !('speechSynthesis' in window)) return;
   mvPrimed = true;
-  try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance('.'); u.volume = .01; u.rate = 2; speechSynthesis.speak(u); mvRefresh(); } catch(e){}
-}, { passive:true }));
+  try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance('.'); u.volume = .01; u.rate = 2; MV_KEEP.push(u); speechSynthesis.speak(u); mvRefresh(); } catch(e){}
+}
+['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, () => { if (VOICE_PACK === 'modern') mvPrime(); }, { passive:true }));
+function mvStatus(msg){ const h = $('#vpackHint'); if (h && VOICE_PACK === 'modern') h.textContent = msg; }
+// Settings → Test voice: speaks straight from the tap (the one moment iOS always allows), and reports what the device offers
+function mvTest(){
+  if (!('speechSynthesis' in window)){ mvStatus('This browser has no speech engine.'); return; }
+  MV_BROKEN = false; MV_FAILS = 0; MV_BAD.clear(); MV_PICK = {};
+  mvRefresh();
+  const v = MV_LIST.find(x => MALE_VOICE.test(x.name)) || MV_LIST[0];
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance('Testing. Can you hear the table?');
+  if (v){ u.voice = v; u.lang = v.lang; } else u.lang = 'en-US';
+  let ok = false;
+  u.onstart = () => { ok = true; MV_OK++; mvStatus(`Working: ${MV_LIST.length} English voices found, testing with ${v ? v.name : 'the default voice'}.`); };
+  u.onerror = e => mvStatus(`The device refused to speak (${e.error || 'error'}). ${MV_LIST.length} voices found.`);
+  MV_KEEP.push(u); speechSynthesis.speak(u); mvPrimed = true;
+  setTimeout(() => { if (!ok) mvStatus(`No sound started. ${MV_LIST.length} English voices listed. Check the ring/silent switch, or use Neural.`); }, 2500);
+}
 
 /* ---------- Studio: pre-recorded clips ---------- */
 const HCAT = ['high card', 'a pair', 'two pair', 'three of a kind', 'a straight', 'a flush', 'a full house', 'four of a kind', 'a straight flush', 'a royal flush'];
@@ -179,7 +209,7 @@ function studioPool(k, set, pool){
 }
 function setVoicePack(v){
   VOICE_PACK = v; store.set('vpack', v);
-  try { speechSynthesis.cancel(); } catch(e){}
+  if (v !== 'modern') try { speechSynthesis.cancel(); } catch(e){}
   setSeg('#seg-vpack', v);
   const h = $('#vpackHint'); if (h) h.textContent = VPACK_HINT[v];
   if (v === 'studio') studioLoad();

@@ -67,8 +67,10 @@ $('#t-show').onchange = () => { if (!G) return; G.cfg.showCom = $('#t-show').che
 $('#t-fps').onchange = () => { showFps = $('#t-fps').checked; };
 $('#t-sound').checked = sfx.on;
 setSeg('#seg-vpack', VOICE_PACK); $('#vpackHint').textContent = VPACK_HINT[VOICE_PACK]; studioLoad(); if (VOICE_PACK === 'neural') neuralInit();
+$('#vTest').onclick = () => { sfx.init(); if (VOICE_PACK === 'modern') mvTest(); else if (TALK) say('D', 'Testing. Can you hear the table?', 2, { basic:true }); };
 $('#seg-vpack').onclick = e => {
   const b = e.target.closest('button[data-v]'); if (!b || b.disabled) return;
+  if (b.dataset.v === 'modern') mvPrime(true);                  // the tap that picks Modern also unlocks device speech
   setVoicePack(b.dataset.v); sfx.init();
   if (TALK) setTimeout(() => say('D', b.dataset.v === 'retro' ? 'Retro voices.' : b.dataset.v === 'neural' ? 'Neural voices. Give me a second to warm up.' : b.dataset.v === 'modern' ? 'Modern voices. How do I sound?' : 'Studio voices. Much better.', 2, { basic:true }), 150);
 };
